@@ -32,7 +32,13 @@ add_library(${TARGET} STATIC ${PUBLIC_HDRS} ${SRCS})
 
 target_link_libraries(${TARGET} PUBLIC math utils)
 
-target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+if(HUNTER_ENABLED)
+  target_include_directories(${TARGET} PUBLIC  
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
+    $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
+else(HUNTER_ENABLED)
+  target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+endif(HUNTER_ENABLED)
 
 # ==================================================================================================
 # Compiler flags
@@ -48,12 +54,19 @@ endif()
 # Expose header-only utilities to lean-and-mean client projects.
 # ==================================================================================================
 add_library(image_headers INTERFACE)
-target_include_directories(image_headers INTERFACE ${PUBLIC_HDR_DIR})
+
+if(HUNTER_ENABLED)
+  target_include_directories(image_headers INTERFACE  
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
+    $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
+else(HUNTER_ENABLED)
+  target_include_directories(image_headers INTERFACE ${PUBLIC_HDR_DIR})
+endif(HUNTER_ENABLED)
 
 # ==================================================================================================
 # Installation
 # ==================================================================================================
-install(TARGETS ${TARGET} ARCHIVE DESTINATION lib/${DIST_DIR})
+install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME} ARCHIVE DESTINATION lib/${DIST_DIR})
 install(DIRECTORY ${PUBLIC_HDR_DIR}/image DESTINATION include)
 
 # ==================================================================================================

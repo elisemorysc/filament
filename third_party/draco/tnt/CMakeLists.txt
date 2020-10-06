@@ -560,8 +560,17 @@ endforeach()
 # Generate $draco_build_dir/draco/draco_features.h.
 draco_generate_features_h()
 
-target_include_directories(dracodec
+if(HUNTER_ENABLED)
+  target_include_directories(dracodec PUBLIC  
+    "$<BUILD_INTERFACE:${draco_build_dir};${draco_root}/src>")
+else(HUNTER_ENABLED)
+  target_include_directories(dracodec
     PUBLIC "${draco_build_dir}"
     PUBLIC "${draco_root}/src")
+endif(HUNTER_ENABLED)
 
 install(TARGETS dracodec ARCHIVE DESTINATION lib/${DIST_DIR})
+
+if(HUNTER_ENABLED)
+  install(TARGETS dracodec EXPORT ${TARGETS_EXPORT_NAME})
+endif(HUNTER_ENABLED)

@@ -82,7 +82,11 @@ endif()
 include_directories(${PUBLIC_HDR_DIR})
 
 add_library(${TARGET} STATIC ${PUBLIC_HDRS} ${SRCS})
-target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+#target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+target_include_directories(${TARGET} PUBLIC  
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
+    $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
+
 target_link_libraries(${TARGET} PUBLIC tsl)
 
 if (ANDROID)
@@ -113,7 +117,13 @@ target_compile_options(${TARGET} PRIVATE
 # Installation
 # ==================================================================================================
 set(INSTALL_TYPE ARCHIVE)
-install(TARGETS ${TARGET} ${INSTALL_TYPE} DESTINATION lib/${DIST_DIR})
+
+if(HUNTER_ENABLED)
+  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME} ${INSTALL_TYPE} DESTINATION lib/${DIST_DIR})
+else(HUNTER_ENABLED)
+  install(TARGETS ${TARGET} ${INSTALL_TYPE} DESTINATION lib/${DIST_DIR})
+endif(HUNTER_ENABLED)
+
 install(FILES ${DIST_HDRS} DESTINATION include/${TARGET})
 if (LINUX OR ANDROID)
     install(FILES ${DIST_LINUX_HDRS} DESTINATION include/${TARGET_LINUX})

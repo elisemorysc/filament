@@ -42,14 +42,26 @@ if(ENABLE_NV_EXTENSIONS)
 endif(ENABLE_NV_EXTENSIONS)
 
 add_library(SPIRV STATIC ${SOURCES} ${HEADERS})
-target_include_directories(SPIRV PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
-target_include_directories(SPIRV PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../..)
+
+if(HUNTER_ENABLED)
+  target_include_directories(SPIRV PUBLIC  
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..;${CMAKE_CURRENT_SOURCE_DIR}/../..>")
+else(HUNTER_ENABLED)
+  target_include_directories(SPIRV PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
+  target_include_directories(SPIRV PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../..)
+endif(HUNTER_ENABLED)
+
 set_property(TARGET SPIRV PROPERTY FOLDER glslang)
 set_property(TARGET SPIRV PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 glslang_add_build_info_dependency(SPIRV)
 
 add_library(SPVRemapper STATIC ${SPVREMAP_SOURCES} ${SPVREMAP_HEADERS})
+
+if(HUNTER_ENABLED)
+  install(TARGETS SPVRemapper EXPORT ${TARGETS_EXPORT_NAME})
+endif(HUNTER_ENABLED)
+
 set_property(TARGET SPVRemapper PROPERTY FOLDER glslang)
 set_property(TARGET SPVRemapper PROPERTY POSITION_INDEPENDENT_CODE ON)
 

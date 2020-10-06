@@ -82,7 +82,18 @@ target_link_libraries(${TARGET} PUBLIC
         matdbg_resources
 )
 
-target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+if(HUNTER_ENABLED)
+  #"target not in target set" issue. https://gitlab.kitware.com/cmake/cmake/-/issues/17357"
+  install(TARGETS SPIRV SPIRV-Tools matdbg_resources EXPORT ${TARGETS_EXPORT_NAME})
+endif(HUNTER_ENABLED)
+
+if(HUNTER_ENABLED)
+  target_include_directories(${TARGET} PUBLIC  
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
+    $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
+else(HUNTER_ENABLED)
+  target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+endif(HUNTER_ENABLED)
 
 # ==================================================================================================
 # Compiler flags
@@ -115,5 +126,10 @@ set(MATDBG_COMBINED_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/libmatdbg_combined.a")
 combine_static_libs(matdbg "${MATDBG_COMBINED_OUTPUT}" "${MATDBG_DEPS}")
 
 set(MATDBG_LIB_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}matdbg${CMAKE_STATIC_LIBRARY_SUFFIX})
+
+if(HUNTER_ENABLED)
+  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME})
+endif(HUNTER_ENABLED)
+
 install(FILES "${MATDBG_COMBINED_OUTPUT}" DESTINATION lib/${DIST_DIR} RENAME ${MATDBG_LIB_NAME})
 install(DIRECTORY ${PUBLIC_HDR_DIR}/matdbg DESTINATION include)

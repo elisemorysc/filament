@@ -12,5 +12,12 @@ set(PUBLIC_HDRS
 include_directories(${PUBLIC_HDR_DIR})
 
 add_library(${TARGET} INTERFACE)
-target_sources(${TARGET} INTERFACE ${PUBLIC_HDRS})
-target_include_directories(${TARGET} INTERFACE ${PUBLIC_HDR_DIR})
+
+if(HUNTER_ENABLED)
+  target_include_directories(${TARGET} INTERFACE  
+  $<BUILD_INTERFACE:${PUBLIC_HDR_DIR}>)
+  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME})
+else(HUNTER_ENABLED)
+  target_sources(${TARGET} INTERFACE ${PUBLIC_HDRS})
+  target_include_directories(${TARGET} INTERFACE ${PUBLIC_HDR_DIR})
+endif(HUNTER_ENABLED)

@@ -231,6 +231,10 @@ spvtools_pch(SPIRV_TOOLS_OPT_SOURCES pch_source_opt)
 
 add_library(SPIRV-Tools-opt ${SPIRV_TOOLS_OPT_SOURCES})
 
+if(HUNTER_ENABLED)
+  install(TARGETS SPIRV-Tools-opt EXPORT ${TARGETS_EXPORT_NAME})  
+endif(HUNTER_ENABLED)
+
 spvtools_default_compile_options(SPIRV-Tools-opt)
 target_include_directories(SPIRV-Tools-opt
   PUBLIC

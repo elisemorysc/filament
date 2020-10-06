@@ -7,7 +7,12 @@ set(PUBLIC_HDR_DIR ${OUR_DIR})
 
 add_library(${TARGET} INTERFACE)
 
-target_include_directories(${TARGET} INTERFACE ${PUBLIC_HDR_DIR})
-
-file(GLOB_RECURSE PUBLIC_HDRS ${PUBLIC_HDR_DIR}/*.h)
-target_sources(${TARGET} INTERFACE ${PUBLIC_HDRS})
+if(HUNTER_ENABLED)
+  target_include_directories(${TARGET} INTERFACE  
+    $<BUILD_INTERFACE:${PUBLIC_HDR_DIR}>)
+  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME})
+else(HUNTER_ENABLED)
+  target_include_directories(${TARGET} INTERFACE ${PUBLIC_HDR_DIR})
+  file(GLOB_RECURSE PUBLIC_HDRS ${PUBLIC_HDR_DIR}/*.h)
+  target_sources(${TARGET} INTERFACE ${PUBLIC_HDRS})
+endif(HUNTER_ENABLED)

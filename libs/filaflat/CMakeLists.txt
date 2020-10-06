@@ -22,7 +22,14 @@ set(SRCS
 include_directories(${PUBLIC_HDR_DIR})
 
 add_library(${TARGET} ${HDRS} ${SRCS})
-target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+
+if(HUNTER_ENABLED)
+  target_include_directories(${TARGET} PUBLIC  
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
+    $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
+else(HUNTER_ENABLED)
+  target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+endif(HUNTER_ENABLED)
 
 target_link_libraries(${TARGET} filabridge utils)
 
@@ -44,4 +51,8 @@ endif()
 # ==================================================================================================
 # We do not need filaflat headers in the install directory
 # install(DIRECTORY ${PUBLIC_HDR_DIR}/filaflat DESTINATION include)
-install(TARGETS ${TARGET} ARCHIVE DESTINATION lib/${DIST_DIR})
+if(HUNTER_ENABLED)
+  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME} ARCHIVE DESTINATION lib/${DIST_DIR})
+else(HUNTER_ENABLED)
+  install(TARGETS ${TARGET} ARCHIVE DESTINATION lib/${DIST_DIR})
+endif(HUNTER_ENABLED)

@@ -83,12 +83,29 @@ include_directories(${CMAKE_BINARY_DIR})
 
 # Filamat
 add_library(${TARGET} STATIC ${HDRS} ${PRIVATE_HDRS} ${SRCS})
-target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+if(HUNTER_ENABLED)
+  target_include_directories(${TARGET} PUBLIC  
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
+    $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
+else(HUNTER_ENABLED)
+  target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+endif(HUNTER_ENABLED)
+
 target_link_libraries(${TARGET} shaders filabridge utils smol-v)
+if(HUNTER_ENABLED)
+  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME})
+endif(HUNTER_ENABLED)
 
 # Filamat Lite
 add_library(filamat_lite STATIC ${HDRS} ${LITE_PRIVATE_HDRS} ${LITE_SRCS})
-target_include_directories(filamat_lite PUBLIC ${PUBLIC_HDR_DIR})
+if(HUNTER_ENABLED)
+  target_include_directories(filamat_lite PUBLIC  
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
+    $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
+else(HUNTER_ENABLED)
+  target_include_directories(filamat_lite PUBLIC ${PUBLIC_HDR_DIR})
+endif(HUNTER_ENABLED)
+
 target_link_libraries(filamat_lite shaders filabridge utils)
 
 # We are being naughty and accessing private headers here
@@ -156,7 +173,11 @@ set(FILAMAT_LIB_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}filamat${CMAKE_STATIC_LIBRARY
 install(FILES "${FILAMAT_COMBINED_OUTPUT}" DESTINATION lib/${DIST_DIR} RENAME ${FILAMAT_LIB_NAME})
 install(DIRECTORY ${PUBLIC_HDR_DIR}/filamat DESTINATION include)
 
-install(TARGETS filamat_lite ARCHIVE DESTINATION lib/${DIST_DIR})
+if(HUNTER_ENABLED)
+  install(TARGETS filamat_lite EXPORT ${TARGETS_EXPORT_NAME} ARCHIVE DESTINATION lib/${DIST_DIR})
+else(HUNTER_ENABLED)
+  install(TARGETS filamat_lite ARCHIVE DESTINATION lib/${DIST_DIR})
+endif(HUNTER_ENABLED)
 
 # ==================================================================================================
 # Tests

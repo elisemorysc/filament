@@ -59,7 +59,14 @@ endmacro()
 macro(spirv_cross_add_library name config_name)
   add_library(${name} ${ARGN})
   extract_headers(hdrs "${ARGN}")
-  target_include_directories(${name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
+
+  if(HUNTER_ENABLED)
+    target_include_directories(${name} PUBLIC  
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>)
+  else(HUNTER_ENABLED)
+    target_include_directories(${name} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
+  endif(HUNTER_ENABLED)
+
   set_target_properties(${name} PROPERTIES
       PUBLIC_HEADERS "${hdrs}")
   target_compile_options(${name} PRIVATE ${spirv-compiler-options})
@@ -92,3 +99,7 @@ spirv_cross_add_library(spirv-cross-msl spirv_cross_msl STATIC
     ../spirv_msl.hpp)
 
 target_link_libraries(spirv-cross-glsl spirv-cross-msl spirv-cross-core)
+
+if(HUNTER_ENABLED)
+  install(TARGETS spirv-cross-glsl spirv-cross-msl spirv-cross-core EXPORT ${TARGETS_EXPORT_NAME})
+endif(HUNTER_ENABLED)

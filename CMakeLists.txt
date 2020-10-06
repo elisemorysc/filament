@@ -4,9 +4,25 @@
 cmake_minimum_required(VERSION 3.10)
 
 # ==================================================================================================
+# Hunter
+# ==================================================================================================
+
+option(HUNTER_ENABLED "Enable Hunter package manager support" OFF)
+
+include(cmake/HunterGate.cmake)
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.23.176.tar.gz"
+    SHA1 "2e9ae973d028660b735ac4c6142725ca36a0048a"
+)
+
+IF(HUNTER_ENABLED)
+  add_definitions(-DFILAMENT_USE_HUNTER)
+ENDIF(HUNTER_ENABLED)
+
+# ==================================================================================================
 # Project declaration
 # ==================================================================================================
-project(TNT)
+project(TNT VERSION 1.9.2)
 
 # ==================================================================================================
 # Options
@@ -423,6 +439,50 @@ endif()
 if (NOT DIST_DIR)
     set(DIST_DIR "${DIST_ARCH}")
 endif()
+
+
+# ==================================================================================================
+# Config files
+# ==================================================================================================
+if(HUNTER_ENABLED)
+  set(PROJECT_NAME filament)
+  set(CONFIG_INSTALL_DIR "lib/cmake/${PROJECT_NAME}")
+  set(INCLUDE_INSTALL_DIR "include")
+
+  set(GENERATED_DIR "${CMAKE_CURRENT_BINARY_DIR}/generated")
+
+  # Configuration
+  set(VERSION_CONFIG "${GENERATED_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
+  set(PROJECT_CONFIG "${GENERATED_DIR}/${PROJECT_NAME}Config.cmake")
+  set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
+  set(NAMESPACE "${PROJECT_NAME}::")
+
+  # Include module with fuction 'write_basic_package_version_file'
+  include(CMakePackageConfigHelpers)
+
+  # Note: PROJECT_VERSION is used as a VERSION
+  write_basic_package_version_file("${VERSION_CONFIG}" COMPATIBILITY SameMajorVersion)
+
+  # Use variables:
+  #   * TARGETS_EXPORT_NAME
+  #   * PROJECT_NAME
+  configure_package_config_file(
+      "cmake/filament-hunter-config.cmake.in"
+      "${PROJECT_CONFIG}"
+      INSTALL_DESTINATION "${CONFIG_INSTALL_DIR}"
+  )
+
+  install(
+      FILES "${PROJECT_CONFIG}" "${VERSION_CONFIG}"
+      DESTINATION "${CONFIG_INSTALL_DIR}"
+  )
+
+  install(
+      EXPORT "${TARGETS_EXPORT_NAME}"
+      NAMESPACE "${NAMESPACE}"
+      DESTINATION "${CONFIG_INSTALL_DIR}"
+  )
+endif() 
 
 # ==================================================================================================
 # Functions
