@@ -162,7 +162,13 @@ add_library(gltfio_resources_lite ${DUMMY_SRC} ${RESGEN_SOURCE})
 # ==================================================================================================
 
 include_directories(${PUBLIC_HDR_DIR} ${RESOURCE_DIR})
-link_libraries(math utils filament cgltf stb geometry gltfio_resources tsl trie)
+link_libraries(math utils filament cgltf geometry gltfio_resources tsl trie)
+
+if(HUNTER_ENABLED)
+  link_libraries(stb::stb)
+else(HUNTER_ENABLED)
+  link_libraries(stb)
+endif(HUNTER_ENABLED)
 
 add_library(gltfio_core STATIC ${PUBLIC_HDRS} ${SRCS})
 

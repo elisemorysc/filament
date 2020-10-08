@@ -34,7 +34,11 @@
 #include <filamentapp/Config.h>
 #include <filamentapp/FilamentApp.h>
 
-#include <stb_image.h>
+#ifdef FILAMENT_USE_HUNTER
+  #include <stb/stb_image.h>
+#else
+  #include <stb_image.h>
+#endif
 
 #include <iostream> // for cerr
 

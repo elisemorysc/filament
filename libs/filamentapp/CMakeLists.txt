@@ -42,7 +42,6 @@ set(LIBS
         assimp
         filament
         sdl2
-        stb
         math
         filamat
         utils
@@ -53,6 +52,12 @@ set(LIBS
         camutils
         geometry
 )
+
+if (HUNTER_ENABLED)
+  list(APPEND LIBS "stb::stb")
+else (HUNTER_ENABLED)
+  list(APPEND LIBS "stb")
+endif(HUNTER_ENABLED)
 
 set(MATERIAL_SRCS
         materials/aiDefaultMat.mat

@@ -26,7 +26,11 @@
 #include <Etc.h>
 
 #define STB_DXT_IMPLEMENTATION
-#include <stb_dxt.h>
+#ifdef FILAMENT_USE_HUNTER
+  #include <stb/stb_dxt.h>
+#else
+  #include <stb_dxt.h>
+#endif
 
 namespace image {
 

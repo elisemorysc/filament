@@ -263,7 +263,9 @@ if (LINUX)
     # Only linux, clang doesn't want to use a shared library that is not PIC.
     # /usr/bin/ld: ../bluegl/libbluegl.a(BlueGL.cpp.o): relocation R_X86_64_32S
     # against `.bss' can not be used when making a shared object; recompile with -fPIC
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    if (NOT HUNTER_ENABLED)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    endif(NOT HUNTER_ENABLED)
 
 endif()
 
@@ -599,6 +601,31 @@ endfunction()
 # Sub-projects
 # ==================================================================================================
 
+if(HUNTER_ENABLED)
+
+  hunter_add_package(stb)
+  find_package(stb CONFIG REQUIRED)
+
+  add_subdirectory(${EXTERNAL}/hat-trie/tnt)
+  add_subdirectory(${EXTERNAL}/robin-map/tnt)
+  add_subdirectory(${EXTERNAL}/smol-v/tnt)
+  add_subdirectory(${EXTERNAL}/benchmark/tnt)
+  add_subdirectory(${EXTERNAL}/meshoptimizer)
+  add_subdirectory(${EXTERNAL}/cgltf/tnt)
+  add_subdirectory(${EXTERNAL}/draco/tnt)
+  add_subdirectory(${EXTERNAL}/getopt)
+else(HUNTER_ENABLED)
+  add_subdirectory(${EXTERNAL}/hat-trie/tnt)
+  add_subdirectory(${EXTERNAL}/robin-map/tnt)
+  add_subdirectory(${EXTERNAL}/smol-v/tnt)
+  add_subdirectory(${EXTERNAL}/benchmark/tnt)
+  add_subdirectory(${EXTERNAL}/meshoptimizer)
+  add_subdirectory(${EXTERNAL}/cgltf/tnt)
+  add_subdirectory(${EXTERNAL}/draco/tnt)
+  add_subdirectory(${EXTERNAL}/stb/tnt)
+  add_subdirectory(${EXTERNAL}/getopt)
+endif(HUNTER_ENABLED)
+
 # Common to all platforms
 add_subdirectory(${EXTERNAL}/libgtest/tnt)
 add_subdirectory(${LIBRARIES}/camutils)
@@ -614,15 +641,7 @@ add_subdirectory(${LIBRARIES}/mathio)
 add_subdirectory(${LIBRARIES}/utils)
 add_subdirectory(${FILAMENT}/filament)
 add_subdirectory(${FILAMENT}/shaders)
-add_subdirectory(${EXTERNAL}/hat-trie/tnt)
-add_subdirectory(${EXTERNAL}/robin-map/tnt)
-add_subdirectory(${EXTERNAL}/smol-v/tnt)
-add_subdirectory(${EXTERNAL}/benchmark/tnt)
-add_subdirectory(${EXTERNAL}/meshoptimizer)
-add_subdirectory(${EXTERNAL}/cgltf/tnt)
-add_subdirectory(${EXTERNAL}/draco/tnt)
-add_subdirectory(${EXTERNAL}/stb/tnt)
-add_subdirectory(${EXTERNAL}/getopt)
+
 
 if (FILAMENT_BUILD_FILAMAT OR IS_HOST_PLATFORM)
     # spirv-tools must come before filamat, as filamat relies on the presence of the

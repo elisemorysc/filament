@@ -29,8 +29,14 @@ include_directories(${PUBLIC_HDR_DIR})
 add_library(${TARGET} STATIC ${PUBLIC_HDRS} ${SRCS})
 
 target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+target_link_libraries(${TARGET} PUBLIC image math png tinyexr utils z astcenc EtcLib)
 
-target_link_libraries(${TARGET} PUBLIC image math png tinyexr utils z astcenc stb EtcLib)
+if (HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PUBLIC stb::stb)
+else (HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PUBLIC stb)
+endif(HUNTER_ENABLED)
+
 if (WIN32)
     target_link_libraries(${TARGET} PRIVATE wsock32)
 endif()
