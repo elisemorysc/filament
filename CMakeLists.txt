@@ -13,6 +13,7 @@ include(cmake/HunterGate.cmake)
 HunterGate(
     URL "https://github.com/ruslo/hunter/archive/v0.23.176.tar.gz"
     SHA1 "2e9ae973d028660b735ac4c6142725ca36a0048a"
+    FILEPATH "${CMAKE_CURRENT_LIST_DIR}/cmake/HunterConfig.cmake"
 )
 
 IF(HUNTER_ENABLED)
@@ -653,7 +654,12 @@ if (FILAMENT_BUILD_FILAMAT OR IS_HOST_PLATFORM)
 
     # the material debugger requires filamat
     if (FILAMENT_ENABLE_MATDBG OR IS_HOST_PLATFORM)
+      if(HUNTER_ENABLED)
+        hunter_add_package(civetweb)
+        find_package(civetweb CONFIG REQUIRED)
+      else(HUNTER_ENABLED)
         add_subdirectory(${EXTERNAL}/civetweb/tnt)
+      endif(HUNTER_ENABLED)
         add_subdirectory(${LIBRARIES}/matdbg)
     endif()
 endif()

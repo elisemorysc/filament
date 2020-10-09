@@ -74,13 +74,18 @@ target_link_libraries(${TARGET} PUBLIC
         filaflat
         filabridge
         backend_headers
-        civetweb
         utils
         SPIRV
         SPIRV-Tools
         spirv-cross-glsl
         matdbg_resources
 )
+
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PUBLIC civetweb::civetweb-c-library civetweb::civetweb-cpp)
+else(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PUBLIC civetweb)
+endif(HUNTER_ENABLED)
 
 if(HUNTER_ENABLED)
   #"target not in target set" issue. https://gitlab.kitware.com/cmake/cmake/-/issues/17357"
@@ -116,11 +121,16 @@ endif()
 set(MATDBG_DEPS
     matdbg
     matdbg_resources
-    civetweb
     SPIRV-Tools
     spirv-cross-core
     spirv-cross-glsl
     )
+
+if(HUNTER_ENABLED)
+  list(APPEND MATDBG_DEPS civetweb::civetweb-c-library civetweb::civetweb-cpp)
+else(HUNTER_ENABLED)
+  list(APPEND MATDBG_DEPS civetweb)
+endif(HUNTER_ENABLED)
 
 set(MATDBG_COMBINED_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/libmatdbg_combined.a")
 combine_static_libs(matdbg "${MATDBG_COMBINED_OUTPUT}" "${MATDBG_DEPS}")
