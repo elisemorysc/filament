@@ -11,8 +11,8 @@ option(HUNTER_ENABLED "Enable Hunter package manager support" OFF)
 
 include(cmake/HunterGate.cmake)
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.23.176.tar.gz"
-    SHA1 "2e9ae973d028660b735ac4c6142725ca36a0048a"
+    URL URL https://github.com/cpp-pm/hunter/archive/v0.23.276.tar.gz
+    SHA1 "96c41c1af76f09b70a3ae0ea2080ba3f52c4bac9"
     FILEPATH "${CMAKE_CURRENT_LIST_DIR}/cmake/HunterConfig.cmake"
 )
 
@@ -603,18 +603,28 @@ endfunction()
 # ==================================================================================================
 
 if(HUNTER_ENABLED)
-
   hunter_add_package(stb)
   find_package(stb CONFIG REQUIRED)
+  hunter_add_package(tsl_hat_trie)
+  find_package(tsl_hat_trie CONFIG REQUIRED)
+  hunter_add_package(tsl_robin_map)
+  find_package(tsl-robin-map CONFIG REQUIRED)
+  hunter_add_package(smol-v)
+  find_package(smol-v CONFIG REQUIRED)
+  hunter_add_package(benchmark)
+  find_package(benchmark CONFIG REQUIRED)
+  hunter_add_package(cgltf)
+  find_package(cgltf CONFIG REQUIRED)
+  hunter_add_package(draco)
+  find_package(draco CONFIG REQUIRED)
+  if(MSVC)
+    hunter_add_package(getopt)
+    find_package(getopt CONFIG REQUIRED)
+  endif(MSVC)
+  hunter_add_package(GTest)
+  find_package(GTest CONFIG REQUIRED)
 
-  add_subdirectory(${EXTERNAL}/hat-trie/tnt)
-  add_subdirectory(${EXTERNAL}/robin-map/tnt)
-  add_subdirectory(${EXTERNAL}/smol-v/tnt)
-  add_subdirectory(${EXTERNAL}/benchmark/tnt)
   add_subdirectory(${EXTERNAL}/meshoptimizer)
-  add_subdirectory(${EXTERNAL}/cgltf/tnt)
-  add_subdirectory(${EXTERNAL}/draco/tnt)
-  add_subdirectory(${EXTERNAL}/getopt)
 else(HUNTER_ENABLED)
   add_subdirectory(${EXTERNAL}/hat-trie/tnt)
   add_subdirectory(${EXTERNAL}/robin-map/tnt)
@@ -625,10 +635,10 @@ else(HUNTER_ENABLED)
   add_subdirectory(${EXTERNAL}/draco/tnt)
   add_subdirectory(${EXTERNAL}/stb/tnt)
   add_subdirectory(${EXTERNAL}/getopt)
+  add_subdirectory(${EXTERNAL}/libgtest/tnt)
 endif(HUNTER_ENABLED)
 
 # Common to all platforms
-add_subdirectory(${EXTERNAL}/libgtest/tnt)
 add_subdirectory(${LIBRARIES}/camutils)
 add_subdirectory(${LIBRARIES}/filabridge)
 add_subdirectory(${LIBRARIES}/filaflat)
@@ -648,7 +658,13 @@ if (FILAMENT_BUILD_FILAMAT OR IS_HOST_PLATFORM)
     # spirv-tools must come before filamat, as filamat relies on the presence of the
     # spirv-tools_SOURCE_DIR variable.
     add_subdirectory(${EXTERNAL}/spirv-tools)
-    add_subdirectory(${EXTERNAL}/glslang/tnt)
+    if(HUNTER_ENABLED)
+      add_subdirectory(${EXTERNAL}/glslang/tnt) #eli fixme
+      #hunter_add_package(glslang)
+      #find_package(glslang CONFIG REQUIRED)
+    else(HUNTER_ENABLED)
+      add_subdirectory(${EXTERNAL}/glslang/tnt)
+    endif(HUNTER_ENABLED)
     add_subdirectory(${EXTERNAL}/spirv-cross/tnt)
     add_subdirectory(${LIBRARIES}/filamat)
 

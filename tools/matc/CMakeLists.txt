@@ -44,7 +44,11 @@ add_library(${TARGET} STATIC ${SRCS} ${HDRS})
 target_include_directories(${TARGET} PUBLIC src)
 target_include_directories(${TARGET} PRIVATE ${filamat_SOURCE_DIR}/src)
 
-target_link_libraries(${TARGET} getopt filamat filabridge utils)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} filamat filabridge utils)
+else(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} getopt filamat filabridge utils)
+endif(HUNTER_ENABLED)
 
 # =================================================================================================
 # Licenses
@@ -89,4 +93,8 @@ set(SRCS
 
 add_executable(${TARGET} ${SRCS})
 
-target_link_libraries(${TARGET} matlang gtest)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} matlang GTest::gtest GTest::gtest_main Threads::Threads)
+else(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} matlang gtest)
+endif(HUNTER_ENABLED)

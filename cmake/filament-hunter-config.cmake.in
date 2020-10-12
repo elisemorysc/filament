@@ -2,6 +2,11 @@
 
 find_package(stb CONFIG REQUIRED)
 find_package(civetweb CONFIG REQUIRED)
+find_package(smol-v CONFIG REQUIRED)
+find_package(benchmark CONFIG REQUIRED)
+find_package(draco CONFIG REQUIRED)
+find_package(GTest CONFIG REQUIRED)
+find_package(glslang CONFIG REQUIRED)
 
 include("${CMAKE_CURRENT_LIST_DIR}/@TARGETS_EXPORT_NAME@.cmake")
 check_required_components("@PROJECT_NAME@")

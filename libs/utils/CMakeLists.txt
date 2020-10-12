@@ -87,7 +87,11 @@ target_include_directories(${TARGET} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
     $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
 
-target_link_libraries(${TARGET} PUBLIC tsl)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PUBLIC tsl::robin_map)
+else(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PUBLIC tsl)
+endif(HUNTER_ENABLED)
 
 if (ANDROID)
     target_link_libraries(${TARGET} PUBLIC log)
@@ -162,7 +166,11 @@ endif()
 
 add_executable(test_${TARGET} ${TEST_SRCS})
 
-target_link_libraries(test_${TARGET} PRIVATE gtest utils tsl math)
+if(HUNTER_ENABLED)
+  target_link_libraries(test_${TARGET} PRIVATE utils tsl::robin_map math GTest::gtest GTest::gtest_main Threads::Threads)
+else(HUNTER_ENABLED)
+  target_link_libraries(test_${TARGET} PRIVATE gtest utils tsl math)
+endif(HUNTER_ENABLED)
 
 # ==================================================================================================
 # Benchmarks
@@ -183,6 +191,12 @@ if (NOT WEBGL)
 
     add_executable(benchmark_${TARGET} ${BENCHMARK_SRCS})
 
-    target_link_libraries(benchmark_${TARGET} PRIVATE benchmark_main utils benchmark_${TARGET}_callee)
+    target_link_libraries(benchmark_${TARGET} PRIVATE utils benchmark_${TARGET}_callee)
+    if(HUNTER_ENABLED)
+      target_link_libraries(benchmark_${TARGET} PRIVATE benchmark::benchmark benchmark::benchmark_main)
+    else(HUNTER_ENABLED)
+      target_link_libraries(benchmark_${TARGET} PRIVATE benchmark_main)
+    endif(HUNTER_ENABLED)
+
 
 endif()

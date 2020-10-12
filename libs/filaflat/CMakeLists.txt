@@ -34,7 +34,11 @@ endif(HUNTER_ENABLED)
 target_link_libraries(${TARGET} filabridge utils)
 
 if (FILAMENT_SUPPORTS_VULKAN)
+  if(HUNTER_ENABLED)
+    target_link_libraries(${TARGET} smol-v::smol-v)
+  else(HUNTER_ENABLED)
     target_link_libraries(${TARGET} smol-v)
+  endif(HUNTER_ENABLED)
 endif()
 
 # ==================================================================================================

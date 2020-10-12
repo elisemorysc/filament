@@ -16,7 +16,11 @@
 
 #include <utils/Path.h>
 
+#if defined (_MSC_VER) || !defined (FILAMENT_USE_HUNTER)
 #include <getopt/getopt.h>
+#else
+#include <getopt.h>
+#endif
 
 #include <algorithm>
 #include <fstream>

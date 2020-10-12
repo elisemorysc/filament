@@ -12,7 +12,11 @@ set(SRCS src/main.cpp)
 # Target definitions
 # ==================================================================================================
 add_executable(${TARGET} ${SRCS})
-target_link_libraries(${TARGET} PRIVATE math utils z image imageio getopt)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PRIVATE math utils z image imageio)
+else(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PRIVATE math utils z image imageio getopt)
+endif(HUNTER_ENABLED)
 
 # =================================================================================================
 # Licenses

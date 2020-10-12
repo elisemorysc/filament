@@ -162,12 +162,17 @@ add_library(gltfio_resources_lite ${DUMMY_SRC} ${RESGEN_SOURCE})
 # ==================================================================================================
 
 include_directories(${PUBLIC_HDR_DIR} ${RESOURCE_DIR})
-link_libraries(math utils filament cgltf geometry gltfio_resources tsl trie)
+link_libraries( )
+if(HUNTER_ENABLED)
+  link_libraries(math utils filament cgltf::cgltf geometry gltfio_resources tsl::hat_trie tsl::robin_map)
+else(HUNTER_ENABLED)
+  link_libraries(math utils filament cgltf geometry gltfio_resources tsl trie)
+endif(HUNTER_ENABLED)
 
 if(HUNTER_ENABLED)
   link_libraries(stb::stb)
 else(HUNTER_ENABLED)
-  link_libraries(stb)
+  link_libraries(stb tsl trie)
 endif(HUNTER_ENABLED)
 
 add_library(gltfio_core STATIC ${PUBLIC_HDRS} ${SRCS})
@@ -181,7 +186,12 @@ else(HUNTER_ENABLED)
 endif(HUNTER_ENABLED)
 
 target_compile_definitions(gltfio_core PUBLIC -DGLTFIO_DRACO_SUPPORTED=1)
-target_link_libraries(gltfio_core PUBLIC dracodec)
+if(HUNTER_ENABLED)
+  target_link_libraries(gltfio_core PUBLIC draco::draco)
+else(HUNTER_ENABLED)
+  target_link_libraries(gltfio_core PUBLIC dracodec)
+endif(HUNTER_ENABLED)
+
 
 if (NOT WEBGL AND NOT ANDROID AND NOT IOS)
 

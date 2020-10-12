@@ -65,7 +65,12 @@ add_executable(test_${TARGET}
         tests/test_vec.cpp
         tests/test_quat.cpp
 )
-target_link_libraries(test_${TARGET} PRIVATE math gtest)
+
+if(HUNTER_ENABLED)
+  target_link_libraries(test_${TARGET} PRIVATE math GTest::gtest GTest::gtest_main Threads::Threads)
+else(HUNTER_ENABLED)
+  target_link_libraries(test_${TARGET} PRIVATE math gtest)
+endif(HUNTER_ENABLED)
 
 # ==================================================================================================
 # Benchmarks
@@ -78,7 +83,11 @@ add_executable(benchmark_${TARGET} ${BENCHMARK_SRCS})
 
 target_compile_options(benchmark_${TARGET} PRIVATE ${OPTIMIZATION_FLAGS})
 
-target_link_libraries(benchmark_${TARGET} PRIVATE benchmark_main utils math)
+if(HUNTER_ENABLED)
+  target_link_libraries(benchmark_${TARGET} PRIVATE benchmark::benchmark benchmark::benchmark_main utils math)
+else(HUNTER_ENABLED)
+  target_link_libraries(benchmark_${TARGET} PRIVATE benchmark_main utils math)
+endif(HUNTER_ENABLED)
 
 if(HUNTER_ENABLED)
   install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME})  

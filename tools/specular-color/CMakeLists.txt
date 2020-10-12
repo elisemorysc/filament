@@ -13,7 +13,11 @@ set(SRCS src/main.cpp)
 # ==================================================================================================
 add_executable(${TARGET} ${SRCS})
 
-target_link_libraries(${TARGET} getopt utils math)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} utils math)
+else(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} getopt utils math)
+endif(HUNTER_ENABLED)
 
 # =================================================================================================
 # Licenses

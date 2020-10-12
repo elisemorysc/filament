@@ -87,13 +87,11 @@ if(HUNTER_ENABLED)
   target_include_directories(${TARGET} PUBLIC  
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
     $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
+  target_link_libraries(${TARGET} shaders filabridge utils smol-v::smol-v)
+  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME})
 else(HUNTER_ENABLED)
   target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
-endif(HUNTER_ENABLED)
-
-target_link_libraries(${TARGET} shaders filabridge utils smol-v)
-if(HUNTER_ENABLED)
-  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME})
+  target_link_libraries(${TARGET} shaders filabridge utils smol-v)
 endif(HUNTER_ENABLED)
 
 # Filamat Lite
@@ -116,10 +114,19 @@ target_include_directories(${TARGET} PRIVATE ${spirv-tools_SOURCE_DIR}/include)
 # we need to force archive re-scan on new symbol dependencies via start/end-group.
 # Read more about this here https://eli.thegreenplace.net/2013/07/09/library-order-in-static-linking
 if (APPLE OR MSVC)
-    target_link_libraries(${TARGET} glslang SPIRV SPVRemapper SPIRV-Tools-opt spirv-cross-glsl)
+    if(HUNTER_ENABLED)
+      target_link_libraries(${TARGET} glslang SPIRV SPVRemapper SPIRV-Tools-opt spirv-cross-glsl)
+    else(HUNTER_ENABLED)
+      target_link_libraries(${TARGET} glslang SPIRV SPVRemapper SPIRV-Tools-opt spirv-cross-glsl)
+    endif(HUNTER_ENABLED)
 else()
-    target_link_libraries(${TARGET}
+    if(HUNTER_ENABLED)
+      target_link_libraries(${TARGET}
             -Wl,--start-group glslang SPIRV SPVRemapper SPIRV-Tools-opt spirv-cross-glsl -Wl,--end-group)
+    else(HUNTER_ENABLED)
+      target_link_libraries(${TARGET}
+            -Wl,--start-group glslang SPIRV SPVRemapper SPIRV-Tools-opt spirv-cross-glsl -Wl,--end-group)
+    endif(HUNTER_ENABLED)
 endif()
 
 # ==================================================================================================
@@ -152,7 +159,8 @@ endif()
 # them together into a single shared library and copy this into the installation folder. This
 # requires us to explicitly list the dependencies below, as CMake doesn't have a way to recursively
 # query dependencies.
-set(FILAMAT_DEPS
+if(HUNTER_ENABLED)
+  set(FILAMAT_DEPS
         OGLCompiler
         OSDependent
         SPIRV
@@ -165,6 +173,21 @@ set(FILAMAT_DEPS
         spirv-cross-glsl
         spirv-cross-msl
         )
+else(HUNTER_ENABLED)
+  set(FILAMAT_DEPS
+        OGLCompiler
+        OSDependent
+        SPIRV
+        SPIRV-Tools
+        SPIRV-Tools-opt
+        SPVRemapper
+        filamat
+        glslang
+        spirv-cross-core
+        spirv-cross-glsl
+        spirv-cross-msl
+        )
+endif(HUNTER_ENABLED)
 
 set(FILAMAT_COMBINED_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/libfilamat_combined.a")
 combine_static_libs(filamat "${FILAMAT_COMBINED_OUTPUT}" "${FILAMAT_DEPS}")
@@ -192,7 +215,11 @@ add_executable(${TARGET} ${SRCS})
 
 target_include_directories(${TARGET} PRIVATE src)
 
-target_link_libraries(${TARGET} filamat gtest)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} filamat GTest::gtest GTest::gtest_main Threads::Threads)
+else(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} filamat gtest)
+endif(HUNTER_ENABLED)
 
 set(TARGET test_filamat_lite)
 set(SRCS
@@ -202,4 +229,8 @@ add_executable(${TARGET} ${SRCS})
 
 target_include_directories(${TARGET} PRIVATE src)
 
-target_link_libraries(${TARGET} filamat_lite gtest)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} filamat_lite GTest::gtest GTest::gtest_main Threads::Threads)
+else(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} filamat_lite gtest)
+endif(HUNTER_ENABLED)

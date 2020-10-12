@@ -22,7 +22,11 @@ set(SRCS
 # ==================================================================================================
 add_executable(${TARGET} ${HDRS} ${SRCS})
 
-target_link_libraries(${TARGET} PRIVATE math utils ibl z image imageio getopt)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PRIVATE math utils ibl z image imageio)
+else(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PRIVATE math utils ibl z image imageio getopt)
+endif(HUNTER_ENABLED)
 
 # ==================================================================================================
 # Compile options and optimizations
@@ -55,5 +59,9 @@ install(TARGETS ${TARGET} RUNTIME DESTINATION bin)
 # ==================================================================================================
 if (NOT ANDROID)
     add_executable(test_${TARGET} tests/test_cmgen.cpp)
-    target_link_libraries(test_${TARGET} PRIVATE image imageio gtest)
+    if(HUNTER_ENABLED)
+      target_link_libraries(test_${TARGET} PRIVATE image imageio GTest::gtest GTest::gtest_main Threads::Threads)
+    else(HUNTER_ENABLED)
+      target_link_libraries(test_${TARGET} PRIVATE image imageio gtest)
+    endif(HUNTER_ENABLED)
 endif()

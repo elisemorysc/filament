@@ -45,7 +45,6 @@ set(LIBS
         math
         filamat
         utils
-        getopt
         imgui
         filagui
         image
@@ -54,9 +53,9 @@ set(LIBS
 )
 
 if (HUNTER_ENABLED)
-  list(APPEND LIBS "stb::stb")
+  list(APPEND LIBS stb::stb)
 else (HUNTER_ENABLED)
-  list(APPEND LIBS "stb")
+  list(APPEND LIBS stb getopt)
 endif(HUNTER_ENABLED)
 
 set(MATERIAL_SRCS

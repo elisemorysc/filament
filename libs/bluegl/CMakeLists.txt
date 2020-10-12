@@ -71,4 +71,8 @@ endif()
 
 # and we're linking against the libraries below, importing their public headers
 target_link_libraries(test_${TARGET} LINK_PUBLIC ${TARGET})
-target_link_libraries(test_${TARGET} LINK_PUBLIC gtest)
+if(HUNTER_ENABLED)
+  target_link_libraries(test_${TARGET} LINK_PUBLIC GTest::gtest GTest::gtest_main Threads::Threads)
+else(HUNTER_ENABLED)
+  target_link_libraries(test_${TARGET} LINK_PUBLIC gtest)
+endif(HUNTER_ENABLED)

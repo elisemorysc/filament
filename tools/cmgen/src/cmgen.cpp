@@ -43,7 +43,11 @@
 #include <iostream>
 #include <sstream>
 
+#if defined (_MSC_VER)
 #include <getopt/getopt.h>
+#else
+#include <getopt.h>
+#endif
 
 
 using namespace filament::math;

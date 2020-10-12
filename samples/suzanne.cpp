@@ -36,9 +36,9 @@
 #include <filamentapp/IBL.h>
 
 #ifdef FILAMENT_USE_HUNTER
-  #include <stb/stb_image.h>
+#include <stb/stb_image.h>
 #else
-  #include <stb_image.h>
+#include <stb_image.h>
 #endif
 
 #include "generated/resources/resources.h"
