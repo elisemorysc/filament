@@ -18,11 +18,10 @@ add_executable(${TARGET} ${SRCS})
 
 target_link_libraries(${TARGET} PUBLIC math)
 target_link_libraries(${TARGET} PUBLIC utils)
-target_link_libraries(${TARGET} PUBLIC assimp)
 if(HUNTER_ENABLED)
-  target_link_libraries(${TARGET} PRIVATE filameshio meshoptimizer)
+  target_link_libraries(${TARGET} PRIVATE filameshio meshoptimizer::meshoptimizer Assimp::assimp)
 else(HUNTER_ENABLED)
-  target_link_libraries(${TARGET} PRIVATE getopt filameshio meshoptimizer)
+  target_link_libraries(${TARGET} PRIVATE getopt filameshio meshoptimizer assimp)
 endif(HUNTER_ENABLED)
 
 

@@ -7,12 +7,10 @@ cmake_minimum_required(VERSION 3.10)
 # Hunter
 # ==================================================================================================
 
-option(HUNTER_ENABLED "Enable Hunter package manager support" OFF)
-
 include(cmake/HunterGate.cmake)
 HunterGate(
-    URL URL https://github.com/cpp-pm/hunter/archive/v0.23.276.tar.gz
-    SHA1 "96c41c1af76f09b70a3ae0ea2080ba3f52c4bac9"
+    URL "https://github.com/cpp-pm/hunter/archive/v0.23.279.tar.gz"
+    SHA1 "0a8ede485c3e9c1ceed8ccb989ab6c0aba1f4db7"
     FILEPATH "${CMAKE_CURRENT_LIST_DIR}/cmake/HunterConfig.cmake"
 )
 
@@ -623,8 +621,38 @@ if(HUNTER_ENABLED)
   endif(MSVC)
   hunter_add_package(GTest)
   find_package(GTest CONFIG REQUIRED)
+  hunter_add_package(meshoptimizer)
+  find_package(meshoptimizer CONFIG REQUIRED)
+  if (IS_HOST_PLATFORM)
+    hunter_add_package(astc-encoder)
+    find_package(astc-encoder CONFIG REQUIRED)
+    hunter_add_package(etc2comp)
+    find_package(etc2comp CONFIG REQUIRED)
+    hunter_add_package(imgui)
+    find_package(imgui CONFIG REQUIRED)
+    hunter_add_package(Assimp)
+    find_package(Assimp CONFIG REQUIRED)
+    hunter_add_package(PNG)
+    find_package(PNG CONFIG REQUIRED)
+    hunter_add_package(SDL2)
+    find_package(SDL2 CONFIG REQUIRED)
+    hunter_add_package(ZLIB)
+    find_package(ZLIB CONFIG REQUIRED)
+    hunter_add_package(tinyexr)
+    find_package(tinyexr CONFIG REQUIRED)
 
-  add_subdirectory(${EXTERNAL}/meshoptimizer)
+  #tmp for assimp, fixme
+    hunter_add_package(openddlparser)
+    find_package(openddlparser CONFIG REQUIRED)
+    hunter_add_package(poly2tri)
+    find_package(poly2tri CONFIG REQUIRED)
+    hunter_add_package(pugixml)
+    find_package(pugixml CONFIG REQUIRED)
+    hunter_add_package(polyclipping)
+    find_package(polyclipping CONFIG REQUIRED)
+  #end tmp for assimp
+  endif()
+
 else(HUNTER_ENABLED)
   add_subdirectory(${EXTERNAL}/hat-trie/tnt)
   add_subdirectory(${EXTERNAL}/robin-map/tnt)
@@ -657,15 +685,20 @@ add_subdirectory(${FILAMENT}/shaders)
 if (FILAMENT_BUILD_FILAMAT OR IS_HOST_PLATFORM)
     # spirv-tools must come before filamat, as filamat relies on the presence of the
     # spirv-tools_SOURCE_DIR variable.
-    add_subdirectory(${EXTERNAL}/spirv-tools)
     if(HUNTER_ENABLED)
-      add_subdirectory(${EXTERNAL}/glslang/tnt) #eli fixme
-      #hunter_add_package(glslang)
-      #find_package(glslang CONFIG REQUIRED)
+      hunter_add_package(SPIRV-Tools)
+      find_package(SPIRV-Tools CONFIG REQUIRED)
+      hunter_add_package(glslang)
+      find_package(glslang CONFIG REQUIRED)
+      hunter_add_package(spirv-cross)
+      find_package(spirv_cross_core CONFIG REQUIRED)
+      find_package(spirv_cross_glsl CONFIG REQUIRED)
+      find_package(spirv_cross_msl CONFIG REQUIRED)
     else(HUNTER_ENABLED)
+      add_subdirectory(${EXTERNAL}/spirv-tools)
       add_subdirectory(${EXTERNAL}/glslang/tnt)
+      add_subdirectory(${EXTERNAL}/spirv-cross/tnt)
     endif(HUNTER_ENABLED)
-    add_subdirectory(${EXTERNAL}/spirv-cross/tnt)
     add_subdirectory(${LIBRARIES}/filamat)
 
     # the material debugger requires filamat
@@ -676,7 +709,7 @@ if (FILAMENT_BUILD_FILAMAT OR IS_HOST_PLATFORM)
       else(HUNTER_ENABLED)
         add_subdirectory(${EXTERNAL}/civetweb/tnt)
       endif(HUNTER_ENABLED)
-        add_subdirectory(${LIBRARIES}/matdbg)
+      add_subdirectory(${LIBRARIES}/matdbg)
     endif()
 endif()
 
@@ -709,14 +742,16 @@ if (IS_HOST_PLATFORM)
 
     add_subdirectory(${FILAMENT}/samples)
 
-    add_subdirectory(${EXTERNAL}/astcenc/tnt)
-    add_subdirectory(${EXTERNAL}/etc2comp)
-    add_subdirectory(${EXTERNAL}/imgui/tnt)
-    add_subdirectory(${EXTERNAL}/libassimp/tnt)
-    add_subdirectory(${EXTERNAL}/libpng/tnt)
-    add_subdirectory(${EXTERNAL}/libsdl2/tnt)
-    add_subdirectory(${EXTERNAL}/libz/tnt)
-    add_subdirectory(${EXTERNAL}/tinyexr/tnt)
+    if(NOT HUNTER_ENABLED)
+      add_subdirectory(${EXTERNAL}/astcenc/tnt)
+      add_subdirectory(${EXTERNAL}/etc2comp)
+      add_subdirectory(${EXTERNAL}/imgui/tnt)
+      add_subdirectory(${EXTERNAL}/libassimp/tnt)
+      add_subdirectory(${EXTERNAL}/libpng/tnt)
+      add_subdirectory(${EXTERNAL}/libsdl2/tnt)
+      add_subdirectory(${EXTERNAL}/libz/tnt)
+      add_subdirectory(${EXTERNAL}/tinyexr/tnt)
+    endif(NOT HUNTER_ENABLED)
 
     add_subdirectory(${TOOLS}/cmgen)
     add_subdirectory(${TOOLS}/cso-lut)

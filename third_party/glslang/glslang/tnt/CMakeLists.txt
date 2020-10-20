@@ -90,13 +90,7 @@ set(PUBLIC_HEADER_FOLDERS
         ../Public
         ../MachineIndependent)
 
-if(HUNTER_ENABLED)
-  target_include_directories(glslang PUBLIC  
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../Include;${CMAKE_CURRENT_SOURCE_DIR}/../Public;${CMAKE_CURRENT_SOURCE_DIR}/../MachineIndependent>")
-else(HUNTER_ENABLED)
-  target_include_directories(glslang PUBLIC ${PUBLIC_HEADER_FOLDERS})
-endif(HUNTER_ENABLED)
-
+target_include_directories(glslang PUBLIC ${PUBLIC_HEADER_FOLDERS})
 target_link_libraries(glslang OGLCompiler OSDependent)
 #if(ENABLE_HLSL)
 #    target_link_libraries(glslang HLSL)
@@ -121,9 +115,3 @@ if(ENABLE_GLSLANG_INSTALL)
         install(FILES ${file} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/glslang/${dir})
     endforeach()
 endif(ENABLE_GLSLANG_INSTALL)
-
-if(HUNTER_ENABLED)
-  install(TARGETS glslang EXPORT ${TARGETS_EXPORT_NAME})
-endif(HUNTER_ENABLED)
-
-

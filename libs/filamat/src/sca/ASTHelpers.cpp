@@ -18,7 +18,7 @@
 
 #include "GLSLTools.h"
 
-#ifdef FILAMENT_USE_HUNTER_ // eli fixme
+#ifdef FILAMENT_USE_HUNTER
 #include <glslang/Include/intermediate.h>
 #include <glslang/MachineIndependent/localintermediate.h>
 #else

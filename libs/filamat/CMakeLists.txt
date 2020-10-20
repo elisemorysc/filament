@@ -87,7 +87,21 @@ if(HUNTER_ENABLED)
   target_include_directories(${TARGET} PUBLIC  
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
     $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
-  target_link_libraries(${TARGET} shaders filabridge utils smol-v::smol-v)
+  target_link_libraries(${TARGET} 
+    shaders 
+    filabridge 
+    utils 
+    smol-v::smol-v 
+    glslang::OGLCompiler
+    glslang::OSDependent
+    glslang::SPIRV
+    SPIRV-Tools::SPIRV-Tools
+    SPIRV-Tools::SPIRV-Tools-opt
+    glslang::SPVRemapper
+    glslang::glslang
+    spirv-cross-core
+    spirv-cross-glsl
+    spirv-cross-msl)
   install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME})
 else(HUNTER_ENABLED)
   target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
@@ -115,14 +129,14 @@ target_include_directories(${TARGET} PRIVATE ${spirv-tools_SOURCE_DIR}/include)
 # Read more about this here https://eli.thegreenplace.net/2013/07/09/library-order-in-static-linking
 if (APPLE OR MSVC)
     if(HUNTER_ENABLED)
-      target_link_libraries(${TARGET} glslang SPIRV SPVRemapper SPIRV-Tools-opt spirv-cross-glsl)
+      target_link_libraries(${TARGET} glslang::glslang glslang::SPIRV glslang::SPVRemapper SPIRV-Tools::SPIRV-Tools-opt spirv-cross-glsl)
     else(HUNTER_ENABLED)
       target_link_libraries(${TARGET} glslang SPIRV SPVRemapper SPIRV-Tools-opt spirv-cross-glsl)
     endif(HUNTER_ENABLED)
 else()
     if(HUNTER_ENABLED)
       target_link_libraries(${TARGET}
-            -Wl,--start-group glslang SPIRV SPVRemapper SPIRV-Tools-opt spirv-cross-glsl -Wl,--end-group)
+            -Wl,--start-group glslang::glslang glslang::SPIRV glslang::SPVRemapper SPIRV-Tools::SPIRV-Tools-opt spirv-cross-glsl -Wl,--end-group)
     else(HUNTER_ENABLED)
       target_link_libraries(${TARGET}
             -Wl,--start-group glslang SPIRV SPVRemapper SPIRV-Tools-opt spirv-cross-glsl -Wl,--end-group)
@@ -159,7 +173,7 @@ endif()
 # them together into a single shared library and copy this into the installation folder. This
 # requires us to explicitly list the dependencies below, as CMake doesn't have a way to recursively
 # query dependencies.
-if(HUNTER_ENABLED)
+if(NOT HUNTER_ENABLED)
   set(FILAMAT_DEPS
         OGLCompiler
         OSDependent
@@ -173,27 +187,13 @@ if(HUNTER_ENABLED)
         spirv-cross-glsl
         spirv-cross-msl
         )
-else(HUNTER_ENABLED)
-  set(FILAMAT_DEPS
-        OGLCompiler
-        OSDependent
-        SPIRV
-        SPIRV-Tools
-        SPIRV-Tools-opt
-        SPVRemapper
-        filamat
-        glslang
-        spirv-cross-core
-        spirv-cross-glsl
-        spirv-cross-msl
-        )
-endif(HUNTER_ENABLED)
 
-set(FILAMAT_COMBINED_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/libfilamat_combined.a")
-combine_static_libs(filamat "${FILAMAT_COMBINED_OUTPUT}" "${FILAMAT_DEPS}")
+  set(FILAMAT_COMBINED_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/libfilamat_combined.a")
+  combine_static_libs(filamat "${FILAMAT_COMBINED_OUTPUT}" "${FILAMAT_DEPS}")
 
-set(FILAMAT_LIB_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}filamat${CMAKE_STATIC_LIBRARY_SUFFIX})
-install(FILES "${FILAMAT_COMBINED_OUTPUT}" DESTINATION lib/${DIST_DIR} RENAME ${FILAMAT_LIB_NAME})
+  set(FILAMAT_LIB_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}filamat${CMAKE_STATIC_LIBRARY_SUFFIX})
+  install(FILES "${FILAMAT_COMBINED_OUTPUT}" DESTINATION lib/${DIST_DIR} RENAME ${FILAMAT_LIB_NAME})
+endif(NOT HUNTER_ENABLED)
 install(DIRECTORY ${PUBLIC_HDR_DIR}/filamat DESTINATION include)
 
 if(HUNTER_ENABLED)

@@ -107,9 +107,9 @@ const TBuiltInResource DefaultTBuiltInResource = {
         /* .maxTaskWorkGroupSizeY_NV = */ 1,
         /* .maxTaskWorkGroupSizeZ_NV = */ 1,
         /* .maxMeshViewCountNV = */ 4,
-//#ifndef FILAMENT_USE_HUNTER eli fixme
+#ifndef FILAMENT_USE_HUNTER
         /* .maxDualSourceDrawBuffersEXT = */ 1,
-//#endif
+#endif
 
         /* .limits = */ {
                 /* .nonInductiveForLoops = */ 1,

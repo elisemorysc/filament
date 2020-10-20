@@ -80,7 +80,11 @@ include_directories(${GENERATION_ROOT})
 
 add_library(${TARGET} STATIC ${PUBLIC_HDRS} ${SRCS} ${RESGEN_SOURCE})
 
-target_link_libraries(${TARGET} PUBLIC imgui filament filamat)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PUBLIC imgui::imgui filament filamat)
+else(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PUBLIC imgui filament filamat)
+endif(HUNTER_ENABLED)
 
 target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
 

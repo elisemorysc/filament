@@ -39,13 +39,10 @@ set(SRCS
 )
 
 set(LIBS
-        assimp
         filament
-        sdl2
         math
         filamat
         utils
-        imgui
         filagui
         image
         camutils
@@ -53,9 +50,9 @@ set(LIBS
 )
 
 if (HUNTER_ENABLED)
-  list(APPEND LIBS stb::stb)
+  list(APPEND LIBS stb::stb imgui::imgui Assimp::assimp SDL2::SDL2)
 else (HUNTER_ENABLED)
-  list(APPEND LIBS stb getopt)
+  list(APPEND LIBS stb getopt imgui assimp sdl2)
 endif(HUNTER_ENABLED)
 
 set(MATERIAL_SRCS

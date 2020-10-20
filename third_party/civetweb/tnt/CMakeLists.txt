@@ -27,17 +27,8 @@ add_definitions(-DUSE_WEBSOCKET)
 
 add_library(${TARGET} STATIC ${PRIVATE_HDRS} ${PUBLIC_HDRS} ${SRCS})
 
-if(HUNTER_ENABLED)
-  target_include_directories(${TARGET} PUBLIC  
-    $<BUILD_INTERFACE:${PUBLIC_HDR_DIR}>)
-else(HUNTER_ENABLED)
-  target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
-endif(HUNTER_ENABLED)
+target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
 
 target_link_libraries(${TARGET} ${CMAKE_DL_LIBS})
 
 target_compile_options(${TARGET} PRIVATE $<$<PLATFORM_ID:Linux>:-fPIC>)
-
-if(HUNTER_ENABLED)
-  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME})
-endif(HUNTER_ENABLED)

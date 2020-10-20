@@ -20,13 +20,6 @@ if (NOT MSVC)
     target_compile_options(${TARGET} PRIVATE -Wno-tautological-unsigned-enum-zero-compare)
 endif()
 
-if(HUNTER_ENABLED)
-  target_include_directories(${TARGET} PUBLIC  
-    $<BUILD_INTERFACE:${PUBLIC_HDR_DIR}>)
-  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME} ARCHIVE DESTINATION lib/${DIST_DIR})
-else(HUNTER_ENABLED)
-  target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
-  install(TARGETS ${TARGET} ARCHIVE DESTINATION lib/${DIST_DIR})
-endif(HUNTER_ENABLED)
+target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
 
-
+install(TARGETS ${TARGET} ARCHIVE DESTINATION lib/${DIST_DIR})

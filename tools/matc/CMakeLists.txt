@@ -73,7 +73,11 @@ set(SRCS src/main.cpp)
 # Target definitions
 # ==================================================================================================
 add_executable(${TARGET} ${SRCS} ${HDRS})
-target_link_libraries(${TARGET} matlang)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} matlang spirv-cross-msl)
+else(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} matlang)
+endif(HUNTER_ENABLED)
 
 # ==================================================================================================
 # Installation

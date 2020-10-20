@@ -69,27 +69,38 @@ include_directories(${PUBLIC_HDR_DIR} ${RESOURCE_DIR})
 
 add_library(${TARGET} STATIC ${PUBLIC_HDRS} ${SRCS})
 
-target_link_libraries(${TARGET} PUBLIC
-        utils
-        filaflat
-        filabridge
-        backend_headers
-        utils
-        SPIRV
-        SPIRV-Tools
-        spirv-cross-glsl
-        matdbg_resources
-)
+
 
 if(HUNTER_ENABLED)
-  target_link_libraries(${TARGET} PUBLIC civetweb::civetweb-c-library civetweb::civetweb-cpp)
+  target_link_libraries(${TARGET} PUBLIC 
+    utils
+    filaflat
+    filabridge
+    backend_headers
+    utils
+    glslang::SPIRV
+    SPIRV-Tools::SPIRV-Tools
+    spirv-cross-glsl
+    matdbg_resources
+    civetweb::civetweb-c-library 
+    civetweb::civetweb-cpp)
 else(HUNTER_ENABLED)
-  target_link_libraries(${TARGET} PUBLIC civetweb)
+  target_link_libraries(${TARGET} PUBLIC
+    utils
+    filaflat
+    filabridge
+    backend_headers
+    utils
+    SPIRV
+    SPIRV-Tools
+    spirv-cross-glsl
+    matdbg_resources
+    civetweb)
 endif(HUNTER_ENABLED)
 
 if(HUNTER_ENABLED)
   #"target not in target set" issue. https://gitlab.kitware.com/cmake/cmake/-/issues/17357"
-  install(TARGETS SPIRV SPIRV-Tools matdbg_resources EXPORT ${TARGETS_EXPORT_NAME})
+  install(TARGETS matdbg_resources EXPORT ${TARGETS_EXPORT_NAME})
 endif(HUNTER_ENABLED)
 
 if(HUNTER_ENABLED)
@@ -121,15 +132,14 @@ endif()
 set(MATDBG_DEPS
     matdbg
     matdbg_resources
-    SPIRV-Tools
     spirv-cross-core
     spirv-cross-glsl
     )
 
 if(HUNTER_ENABLED)
-  list(APPEND MATDBG_DEPS civetweb::civetweb-c-library civetweb::civetweb-cpp)
+  list(APPEND MATDBG_DEPS civetweb::civetweb-c-library civetweb::civetweb-cpp SPIRV-Tools::SPIRV-Tools)
 else(HUNTER_ENABLED)
-  list(APPEND MATDBG_DEPS civetweb)
+  list(APPEND MATDBG_DEPS civetweb SPIRV-Tools)
 endif(HUNTER_ENABLED)
 
 set(MATDBG_COMBINED_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/libmatdbg_combined.a")
