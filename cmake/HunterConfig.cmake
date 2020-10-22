@@ -1,7 +1,7 @@
 hunter_config(civetweb 
               VERSION 1.11-p0
               CMAKE_ARGS 
-                CMAKE_CXX_FLAGS=-stdlib=libc++ CIVETWEB_ENABLE_WEBSOCKETS=ON)
+                CMAKE_CXX_FLAGS=-stdlib=libc++ CMAKE_POSITION_INDEPENDENT_CODE=ON CIVETWEB_ENABLE_WEBSOCKETS=ON)
 
 hunter_config(smol-v 
               VERSION 0.0.0-4b52c16-p0
@@ -81,6 +81,13 @@ hunter_config(polyclipping
               CMAKE_ARGS 
                 CMAKE_CXX_FLAGS=-stdlib=libc++ CMAKE_POSITION_INDEPENDENT_CODE=ON)
 #END ASSIMP TEMP
+
+#Testing only
+hunter_config(md5
+              VERSION 1.6
+              CMAKE_ARGS 
+                CMAKE_CXX_FLAGS=-stdlib=libc++ CMAKE_POSITION_INDEPENDENT_CODE=ON)
+
 
                 
   
