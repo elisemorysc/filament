@@ -29,8 +29,8 @@ hunter_config(glslang
                 CMAKE_CXX_FLAGS=-stdlib=libc++ CMAKE_POSITION_INDEPENDENT_CODE=ON)
 
 hunter_config(SPIRV-Tools 
-              URL https://github.com/elisemorysc/SPIRV-Tools/archive/hunter-2020.4.tar.gz
-              SHA1 abaf2e0a33140e186509176bd03939229c451394
+              URL https://github.com/cpp-pm/SPIRV-Tools/archive/update-v2020.4.zip
+              SHA1 c9e2b9a3baa141f6daaed31447cecd4985f47101
               CMAKE_ARGS 
                 CMAKE_CXX_FLAGS=-stdlib=libc++ CMAKE_POSITION_INDEPENDENT_CODE=ON)
 
@@ -40,8 +40,8 @@ hunter_config(spirv-cross
                 CMAKE_CXX_FLAGS=-stdlib=libc++ CMAKE_POSITION_INDEPENDENT_CODE=ON)
 
 hunter_config(astc-encoder
-              URL https://github.com/elisemorysc/astc-encoder/archive/hunter-a47b80f-p0.tar.gz
-              SHA1 b53307db2b37ab75d7639feefeefb1a38b46a79d
+              URL https://github.com/cpp-pm/astc-encoder/archive/1.3-a47b80f-p0.zip
+              SHA1 0143896afc679c05171a20a46217bbc0b8a5896d
               CMAKE_ARGS 
                 CMAKE_CXX_FLAGS=-stdlib=libc++ CMAKE_POSITION_INDEPENDENT_CODE=ON)
 

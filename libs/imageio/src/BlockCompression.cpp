@@ -22,15 +22,15 @@
 #include <cmath>
 #include <thread>
 
-#include <astcenc.h>
-
 #define STB_DXT_IMPLEMENTATION
 #ifdef FILAMENT_USE_HUNTER
 #include <stb/stb_dxt.h>
 #include <etc2comp/EtcLib/Etc/Etc.h>
+#include <astc-encoder/astcenc.h>
 #else
 #include <stb_dxt.h>
 #include <Etc.h>
+#include <astcenc.h>
 #endif
 
 namespace image {
