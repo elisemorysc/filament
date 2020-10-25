@@ -24,7 +24,8 @@ hunter_config(GTest
                 CMAKE_CXX_FLAGS=-stdlib=libc++)
 
 hunter_config(glslang 
-              VERSION 7.12.3352-p1
+              URL https://github.com/elisemorysc/glslang/archive/9eef54b2-p0.tar.gz
+              SHA1 f99ff5307ee891ed57aed6efd5097816bffe5c7f
               CMAKE_ARGS 
                 CMAKE_CXX_FLAGS=-stdlib=libc++ CMAKE_POSITION_INDEPENDENT_CODE=ON)
 
