@@ -38,21 +38,38 @@ set(SRCS
         src/Sphere.cpp
 )
 
-set(LIBS
-        assimp
-        filament
-        sdl2
-        stb
-        math
-        filamat
-        utils
-        getopt
-        imgui
-        filagui
-        image
-        camutils
-        geometry
-)
+if(HUNTER_ENABLED)
+  set(LIBS
+   Assimp::assimp
+   filament
+   SDL2::SDL2
+   stb::stb
+   math
+   filamat
+   utils
+   imgui::imgui
+   filagui
+   image
+   camutils
+   geometry
+  )
+else()
+  set(LIBS
+    assimp
+    filament
+    sdl2
+    stb
+    math
+    filamat
+    utils
+    getopt
+    imgui
+    filagui
+    image
+    camutils
+    geometry
+  )
+endif()
 
 set(MATERIAL_SRCS
         materials/aiDefaultMat.mat

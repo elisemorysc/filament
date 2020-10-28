@@ -338,7 +338,15 @@ include_directories(src)
 add_library(${TARGET} STATIC ${PRIVATE_HDRS} ${PUBLIC_HDRS} ${SRCS} ${DATA_BINS})
 
 # specify where the public headers of this library are
-target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+if(HUNTER_ENABLED)
+  target_include_directories(${TARGET} PUBLIC  
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
+  $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
+else()
+  target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+endif()
+
+
 
 # ==================================================================================================
 # Dependencies
@@ -389,9 +397,11 @@ set(LINUX_LINKER_OPTIMIZATION_FLAGS
         -Wl,--exclude-libs,bluegl
 )
 
-set(LINUX_COMPILER_FLAGS
+if (NOT HUNTER_ENABLED)
+  set(LINUX_COMPILER_FLAGS
         -fPIC
-)
+  )
+endif()
 
 if (MSVC)
     set(FILAMENT_WARNINGS /W3)
@@ -420,7 +430,11 @@ target_link_libraries(${TARGET} PRIVATE
 # Installation
 # ==================================================================================================
 set(INSTALL_TYPE ARCHIVE)
-install(TARGETS ${TARGET} ${INSTALL_TYPE} DESTINATION lib/${DIST_DIR})
+if(HUNTER_ENABLED)
+  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME} ${INSTALL_TYPE} DESTINATION lib/${DIST_DIR})
+else()
+  install(TARGETS ${TARGET} ${INSTALL_TYPE} DESTINATION lib/${DIST_DIR})
+endif()
 install(DIRECTORY ${PUBLIC_HDR_DIR}/filament DESTINATION include)
 install(FILES "README.md" DESTINATION .)
 install(FILES "../LICENSE" DESTINATION .)

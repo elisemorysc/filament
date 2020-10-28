@@ -69,7 +69,22 @@ include_directories(${PUBLIC_HDR_DIR} ${RESOURCE_DIR})
 
 add_library(${TARGET} STATIC ${PUBLIC_HDRS} ${SRCS})
 
-target_link_libraries(${TARGET} PUBLIC
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PUBLIC
+        utils
+        filaflat
+        filabridge
+        backend_headers
+        civetweb::civetweb-c-library 
+        civetweb::civetweb-cpp
+        utils
+        glslang::SPIRV
+        SPIRV-Tools::SPIRV-Tools
+        spirv-cross-glsl
+        matdbg_resources
+ )
+else(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PUBLIC
         utils
         filaflat
         filabridge
@@ -80,9 +95,21 @@ target_link_libraries(${TARGET} PUBLIC
         SPIRV-Tools
         spirv-cross-glsl
         matdbg_resources
-)
+  )
+endif()
 
-target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+if(HUNTER_ENABLED)
+  #"target not in target set" issue. https://gitlab.kitware.com/cmake/cmake/-/issues/17357"
+  install(TARGETS matdbg_resources EXPORT ${TARGETS_EXPORT_NAME})
+endif()
+
+if(HUNTER_ENABLED)
+  target_include_directories(${TARGET} PUBLIC  
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
+    $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
+else()
+  target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+endif()
 
 # ==================================================================================================
 # Compiler flags
@@ -102,18 +129,35 @@ endif()
 # matdbg has dependencies on non-installed libraries. Here we bundle them all together into a single
 # library that gets copied into the installation folder so users are only required to link against
 # matdbg.
-set(MATDBG_DEPS
+if(HUNTER_ENABLED)
+  set(MATDBG_DEPS
+    matdbg
+    matdbg_resources
+    civetweb::civetweb-c-library 
+    civetweb::civetweb-cpp 
+    SPIRV-Tools::SPIRV-Tools
+    spirv-cross-core
+    spirv-cross-glsl
+  )
+else()
+  set(MATDBG_DEPS
     matdbg
     matdbg_resources
     civetweb
     SPIRV-Tools
     spirv-cross-core
     spirv-cross-glsl
-    )
+  )
+endif()
 
 set(MATDBG_COMBINED_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/libmatdbg_combined.a")
 combine_static_libs(matdbg "${MATDBG_COMBINED_OUTPUT}" "${MATDBG_DEPS}")
 
 set(MATDBG_LIB_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}matdbg${CMAKE_STATIC_LIBRARY_SUFFIX})
+
+if(HUNTER_ENABLED)
+  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME})
+endif()
+
 install(FILES "${MATDBG_COMBINED_OUTPUT}" DESTINATION lib/${DIST_DIR} RENAME ${MATDBG_LIB_NAME})
 install(DIRECTORY ${PUBLIC_HDR_DIR}/matdbg DESTINATION include)

@@ -33,7 +33,11 @@
 
 #include <png.h>
 
+#ifdef FILAMENT_USE_HUNTER
+#include <tinyexr/tinyexr.h>
+#else
 #include <tinyexr.h>
+#endif
 
 #include <math/half.h>
 #include <math/vec3.h>

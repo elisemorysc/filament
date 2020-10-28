@@ -27,7 +27,13 @@ add_library(${TARGET} STATIC ${PUBLIC_HDRS} ${SRCS})
 
 target_link_libraries(${TARGET} utils math)
 
-target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+if(HUNTER_ENABLED)
+  target_include_directories(${TARGET} PUBLIC  
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
+    $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
+else()
+  target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+endif()
 
 # test_bluevk is not supported on mobile or Windows
 if (NOT ANDROID AND NOT IOS AND NOT WIN32)
@@ -35,4 +41,8 @@ if (NOT ANDROID AND NOT IOS AND NOT WIN32)
     target_link_libraries(test_bluevk PRIVATE dl bluevk sdl2)
 endif()
 
-install(TARGETS ${TARGET} ARCHIVE DESTINATION lib/${DIST_DIR})
+if(HUNTER_ENABLED)
+  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME} ARCHIVE DESTINATION lib/${DIST_DIR})
+else ()
+  install(TARGETS ${TARGET} ARCHIVE DESTINATION lib/${DIST_DIR})
+endif()

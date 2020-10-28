@@ -37,7 +37,11 @@
 #include <math/vec3.h>
 #include <math/vec4.h>
 
+#ifdef FILAMENT_USE_HUNTER
+#include <tinyexr/tinyexr.h>
+#else
 #include <tinyexr.h>
+#endif
 
 #include <vector>
 

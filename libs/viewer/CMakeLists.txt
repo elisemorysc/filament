@@ -26,7 +26,11 @@ set(SRCS
 # Include and target definitions
 # ==================================================================================================
 add_library(${TARGET} STATIC ${PUBLIC_HDRS} ${SRCS})
-target_link_libraries(${TARGET} PUBLIC imgui filament gltfio filagui jsmn imageio)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PUBLIC imgui::imgui filament gltfio filagui jsmn::jsmn imageio)
+else()
+  target_link_libraries(${TARGET} PUBLIC imgui filament gltfio filagui jsmn imageio)
+endif()
 target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
 
 # ==================================================================================================
@@ -50,5 +54,9 @@ install(DIRECTORY ${PUBLIC_HDR_DIR}/viewer DESTINATION include)
 # ==================================================================================================
 if (NOT ANDROID AND NOT WEBGL AND NOT IOS)
     add_executable(test_settings tests/test_settings.cpp)
-    target_link_libraries(test_settings PRIVATE ${TARGET} gtest)
+    if(HUNTER_ENABLED)
+      target_link_libraries(test_settings PRIVATE ${TARGET} GTest::gtest GTest::gtest_main)
+    else()
+      target_link_libraries(test_settings PRIVATE ${TARGET} gtest)
+    endif()
 endif()

@@ -12,7 +12,11 @@ set(SRCS src/main.cpp src/GlslMinify.cpp)
 # Target definitions
 # ==================================================================================================
 add_executable(${TARGET} ${SRCS})
-target_link_libraries(${TARGET} PRIVATE utils getopt)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} PRIVATE utils)
+else()
+  target_link_libraries(${TARGET} PRIVATE utils getopt)
+endif()
 
 # =================================================================================================
 # Licenses
@@ -36,5 +40,9 @@ if (NOT ANDROID)
             tests/test_glslminifier.cpp
     )
     target_include_directories(test_${TARGET} PRIVATE src)
-    target_link_libraries(test_${TARGET} PRIVATE gtest)
+    if(HUNTER_ENABLED)
+      target_link_libraries(test_${TARGET} PRIVATE GTest::gtest Threads::Threads)
+    else()
+      target_link_libraries(test_${TARGET} PRIVATE gtest)
+    endif()
 endif()

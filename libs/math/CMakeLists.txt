@@ -41,7 +41,14 @@ include_directories(${PUBLIC_HDR_DIR})
 
 add_library(${TARGET} STATIC ${PUBLIC_HDRS} ${SRCS})
 target_compile_options(${TARGET} PRIVATE ${OPTIMIZATION_FLAGS})
-target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+
+if(HUNTER_ENABLED)
+  target_include_directories(${TARGET} PUBLIC  
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
+    $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
+else()
+  target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+endif()
 
 # ==================================================================================================
 # Installation
@@ -58,7 +65,12 @@ add_executable(test_${TARGET}
         tests/test_vec.cpp
         tests/test_quat.cpp
 )
-target_link_libraries(test_${TARGET} PRIVATE math gtest)
+
+if(HUNTER_ENABLED)
+  target_link_libraries(test_${TARGET} PRIVATE math GTest::gtest GTest::gtest_main Threads::Threads)
+else()
+  target_link_libraries(test_${TARGET} PRIVATE math gtest)
+endif()
 
 # ==================================================================================================
 # Benchmarks
@@ -71,4 +83,12 @@ add_executable(benchmark_${TARGET} ${BENCHMARK_SRCS})
 
 target_compile_options(benchmark_${TARGET} PRIVATE ${OPTIMIZATION_FLAGS})
 
-target_link_libraries(benchmark_${TARGET} PRIVATE benchmark_main utils math)
+if(HUNTER_ENABLED)
+  target_link_libraries(benchmark_${TARGET} PRIVATE benchmark::benchmark benchmark::benchmark_main utils math)
+else()
+  target_link_libraries(benchmark_${TARGET} PRIVATE benchmark_main utils math)
+endif()
+
+if(HUNTER_ENABLED)
+  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME})  
+endif()
