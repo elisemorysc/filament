@@ -28,9 +28,11 @@ endif()
 # ==================================================================================================
 set(TARGET filament-jni)
 
-set(CXX_STANDARD "-std=c++17")
-if (WIN32)
+if(NOT HUNTER_ENABLED)
+  set(CXX_STANDARD "-std=c++17")
+  if (WIN32)
     set(CXX_STANDARD "/std:c++17")
+  endif()
 endif()
 
 set(ANDROID_DIR ../../android)

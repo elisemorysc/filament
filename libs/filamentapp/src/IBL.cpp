@@ -29,7 +29,11 @@
 #include <image/KtxBundle.h>
 #include <image/KtxUtility.h>
 
+#ifdef FILAMENT_USE_HUNTER
+#include <stb/stb_image.h>
+#else
 #include <stb_image.h>
+#endif
 
 #include <utils/Path.h>
 #include <filament/IndirectLight.h>

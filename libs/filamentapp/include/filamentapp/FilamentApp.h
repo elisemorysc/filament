@@ -23,7 +23,11 @@
 #include <unordered_map>
 #include <vector>
 
+#ifdef FILAMENT_USE_HUNTER
+#include<SDL2/SDL.h>
+#else
 #include <SDL.h>
+#endif
 
 #include <filament/Engine.h>
 #include <filament/Viewport.h>

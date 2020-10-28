@@ -24,7 +24,11 @@
 
 #include "filamat/MaterialBuilder.h"    // for MaterialBuilder:: enums
 
+#ifdef FILAMENT_USE_HUNTER
+#include <glslang/Public/ShaderLang.h>
+#else
 #include <ShaderLang.h>
+#endif
 
 #include <spirv-tools/optimizer.hpp>
 

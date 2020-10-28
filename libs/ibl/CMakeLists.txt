@@ -34,7 +34,14 @@ set(SRCS
 include_directories(${PUBLIC_HDR_DIR})
 
 add_library(${TARGET} ${PUBLIC_HDRS} ${PRIVATE_HDRS} ${SRCS})
-target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+
+if(HUNTER_ENABLED)
+  target_include_directories(${TARGET} PUBLIC  
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${PUBLIC_HDR_DIR}>  
+    $<INSTALL_INTERFACE:${PUBLIC_HDR_DIR}>)
+else()
+  target_include_directories(${TARGET} PUBLIC ${PUBLIC_HDR_DIR})
+endif()
 
 target_link_libraries(${TARGET} math utils)
 
@@ -51,5 +58,9 @@ endif()
 # ==================================================================================================
 # Installation
 # ==================================================================================================
-install(TARGETS ${TARGET} ARCHIVE DESTINATION lib/${DIST_DIR})
+if(HUNTER_ENABLED)
+  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME} ARCHIVE DESTINATION lib/${DIST_DIR})
+else()
+  install(TARGETS ${TARGET} ARCHIVE DESTINATION lib/${DIST_DIR})
+endif()
 install(DIRECTORY ${PUBLIC_HDR_DIR}/ibl DESTINATION include)

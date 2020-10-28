@@ -44,7 +44,11 @@ add_library(${TARGET} STATIC ${SRCS} ${HDRS})
 target_include_directories(${TARGET} PUBLIC src)
 target_include_directories(${TARGET} PRIVATE ${filamat_SOURCE_DIR}/src)
 
-target_link_libraries(${TARGET} getopt filamat filabridge utils)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} filamat filabridge utils)
+else()
+  target_link_libraries(${TARGET} getopt filamat filabridge utils)
+endif()
 
 # =================================================================================================
 # Licenses
@@ -69,7 +73,11 @@ set(SRCS src/main.cpp)
 # Target definitions
 # ==================================================================================================
 add_executable(${TARGET} ${SRCS} ${HDRS})
-target_link_libraries(${TARGET} matlang)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} matlang spirv-cross-msl)
+else()
+  target_link_libraries(${TARGET} matlang)
+endif()
 
 # ==================================================================================================
 # Installation
@@ -89,4 +97,8 @@ set(SRCS
 
 add_executable(${TARGET} ${SRCS})
 
-target_link_libraries(${TARGET} matlang gtest)
+if(HUNTER_ENABLED)
+  target_link_libraries(${TARGET} matlang GTest::gtest GTest::gtest_main Threads::Threads)
+else()
+  target_link_libraries(${TARGET} matlang gtest)
+endif()
