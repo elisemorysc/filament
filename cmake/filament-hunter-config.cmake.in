@@ -2,6 +2,8 @@
 
 find_package(stb CONFIG REQUIRED)
 find_package(civetweb CONFIG REQUIRED)
+find_package(tsl_hat_trie CONFIG REQUIRED)
+find_package(tsl-robin-map CONFIG REQUIRED)
 find_package(smol-v CONFIG REQUIRED)
 find_package(benchmark CONFIG REQUIRED)
 find_package(draco CONFIG REQUIRED)
