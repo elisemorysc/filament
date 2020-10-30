@@ -17,6 +17,3 @@ hunter_config(spirv-cross VERSION 20200917)
 hunter_config(astc-encoder
               URL https://github.com/cpp-pm/astc-encoder/archive/1.3-a47b80f-p0.zip
               SHA1 0143896afc679c05171a20a46217bbc0b8a5896d)
-
-                
-  

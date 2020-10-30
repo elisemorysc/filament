@@ -82,8 +82,10 @@ if(HUNTER_ENABLED)
         SPIRV-Tools::SPIRV-Tools
         spirv-cross-glsl
         matdbg_resources
- )
-else(HUNTER_ENABLED)
+        spirv-cross-core
+        spirv-cross-glsl
+  )
+else()
   target_link_libraries(${TARGET} PUBLIC
         utils
         filaflat
@@ -99,7 +101,6 @@ else(HUNTER_ENABLED)
 endif()
 
 if(HUNTER_ENABLED)
-  #"target not in target set" issue. https://gitlab.kitware.com/cmake/cmake/-/issues/17357"
   install(TARGETS matdbg_resources EXPORT ${TARGETS_EXPORT_NAME})
 endif()
 
@@ -129,17 +130,7 @@ endif()
 # matdbg has dependencies on non-installed libraries. Here we bundle them all together into a single
 # library that gets copied into the installation folder so users are only required to link against
 # matdbg.
-if(HUNTER_ENABLED)
-  set(MATDBG_DEPS
-    matdbg
-    matdbg_resources
-    civetweb::civetweb-c-library 
-    civetweb::civetweb-cpp 
-    SPIRV-Tools::SPIRV-Tools
-    spirv-cross-core
-    spirv-cross-glsl
-  )
-else()
+if(NOT HUNTER_ENABLED)
   set(MATDBG_DEPS
     matdbg
     matdbg_resources
@@ -148,16 +139,16 @@ else()
     spirv-cross-core
     spirv-cross-glsl
   )
+
+  set(MATDBG_COMBINED_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/libmatdbg_combined.a")
+  combine_static_libs(matdbg "${MATDBG_COMBINED_OUTPUT}" "${MATDBG_DEPS}")
+
+  set(MATDBG_LIB_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}matdbg${CMAKE_STATIC_LIBRARY_SUFFIX})
 endif()
-
-set(MATDBG_COMBINED_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/libmatdbg_combined.a")
-combine_static_libs(matdbg "${MATDBG_COMBINED_OUTPUT}" "${MATDBG_DEPS}")
-
-set(MATDBG_LIB_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}matdbg${CMAKE_STATIC_LIBRARY_SUFFIX})
 
 if(HUNTER_ENABLED)
-  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME})
+  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME} ARCHIVE DESTINATION lib/${DIST_DIR})
+else()
+  install(FILES "${MATDBG_COMBINED_OUTPUT}" DESTINATION lib/${DIST_DIR} RENAME ${MATDBG_LIB_NAME})
 endif()
-
-install(FILES "${MATDBG_COMBINED_OUTPUT}" DESTINATION lib/${DIST_DIR} RENAME ${MATDBG_LIB_NAME})
 install(DIRECTORY ${PUBLIC_HDR_DIR}/matdbg DESTINATION include)
