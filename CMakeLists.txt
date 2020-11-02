@@ -21,7 +21,7 @@ endif()
 # ==================================================================================================
 # Project declaration
 # ==================================================================================================
-project(TNT VERSION 1.9.5)
+project(TNT VERSION 1.9.6)
 
 # ==================================================================================================
 # Options
@@ -278,7 +278,7 @@ if (LINUX)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
     endif()
 
-    if(HUNTER_ENABLED)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-builtin")
     endif()
 
