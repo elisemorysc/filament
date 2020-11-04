@@ -9,8 +9,8 @@ cmake_minimum_required(VERSION 3.10)
 
 include(cmake/HunterGate.cmake)
 HunterGate(
-    URL "https://github.com/cpp-pm/hunter/archive/v0.23.279.tar.gz"
-    SHA1 "0a8ede485c3e9c1ceed8ccb989ab6c0aba1f4db7"
+    URL "https://github.com/cpp-pm/hunter/archive/v0.23.281.tar.gz"
+    SHA1 "4235c609f213c0d1f9d4503f132be1571091ef35"
     FILEPATH "${CMAKE_CURRENT_LIST_DIR}/cmake/HunterConfig.cmake"
 )
 
@@ -663,6 +663,7 @@ if(HUNTER_ENABLED)
   if (FILAMENT_BUILD_FILAMAT OR IS_HOST_PLATFORM)
     hunter_add_package(SPIRV-Tools)
     find_package(SPIRV-Tools CONFIG REQUIRED)
+    find_package(SPIRV-Tools-opt CONFIG REQUIRED)
     hunter_add_package(glslang)
     find_package(glslang CONFIG REQUIRED)
     hunter_add_package(spirv-cross)
