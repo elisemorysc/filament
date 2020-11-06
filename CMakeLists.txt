@@ -630,6 +630,7 @@ endfunction()
 # ==================================================================================================
 
 if(HUNTER_ENABLED)
+  find_package(OpenGL)
   hunter_add_package(GTest)
   find_package(GTest CONFIG REQUIRED)
   hunter_add_package(tsl_hat_trie)
