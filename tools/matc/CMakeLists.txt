@@ -45,7 +45,7 @@ target_include_directories(${TARGET} PUBLIC src)
 target_include_directories(${TARGET} PRIVATE ${filamat_SOURCE_DIR}/src)
 
 if(HUNTER_ENABLED)
-  target_link_libraries(${TARGET} filamat filabridge utils)
+  target_link_libraries(${TARGET} getopt::getopt filamat filabridge utils)
 else()
   target_link_libraries(${TARGET} getopt filamat filabridge utils)
 endif()
