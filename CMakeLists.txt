@@ -9,8 +9,8 @@ cmake_minimum_required(VERSION 3.10)
 
 include(cmake/HunterGate.cmake)
 HunterGate(
-    URL "https://github.com/cpp-pm/hunter/archive/v0.23.282.tar.gz"
-    SHA1 "6811dd3e10eea8cd6b479a422a828115af1a35ba"
+    URL "https://github.com/cpp-pm/hunter/archive/v0.23.283.tar.gz"
+    SHA1 "f445fbb4716e5485e83f6acf110b51d3b8916b2c"
     FILEPATH "${CMAKE_CURRENT_LIST_DIR}/cmake/HunterConfig.cmake"
 )
 
@@ -249,18 +249,16 @@ endif()
 # ==================================================================================================
 # General compiler flags
 # ==================================================================================================
-if(NOT HUNTER_ENABLED)
-  set(CXX_STANDARD "-std=c++17")
-  if (WIN32)
-    set(CXX_STANDARD "/std:c++17")
-  endif()
+# C++17 is required. On MSVC, C++20 is required.
+set(CMAKE_CXX_STANDARD "17")
+if (MSVC)
+    set(CMAKE_CXX_STANDARD "20")
 endif()
 
 if (MSVC)
-    set(CXX_STANDARD "/std:c++latest")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_STANDARD} /W0 /Zc:__cplusplus")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W0 /Zc:__cplusplus")
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_STANDARD} -fstrict-aliasing -Wno-unknown-pragmas -Wno-unused-function")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fstrict-aliasing -Wno-unknown-pragmas -Wno-unused-function")
 endif()
 
 if (FILAMENT_USE_EXTERNAL_GLES3)
@@ -376,6 +374,11 @@ if (APPLE)
     # prevents ar from invoking ranlib, let CMake do it
     set(CMAKE_C_ARCHIVE_CREATE   "<CMAKE_AR> qc -S <TARGET> <LINK_FLAGS> <OBJECTS>")
     set(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> qc -S <TARGET> <LINK_FLAGS> <OBJECTS>")
+endif()
+
+if(MSVC)
+    set(GC_SECTIONS "")
+    set(B_SYMBOLIC_FUNCTIONS "")
 endif()
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${GC_SECTIONS}")
@@ -512,7 +515,7 @@ if(HUNTER_ENABLED)
       NAMESPACE "${NAMESPACE}"
       DESTINATION "${CONFIG_INSTALL_DIR}"
   )
-endif() 
+endif()
 
 # ==================================================================================================
 # Functions
@@ -649,10 +652,8 @@ if(HUNTER_ENABLED)
   find_package(draco CONFIG REQUIRED)
   hunter_add_package(stb)
   find_package(stb CONFIG REQUIRED)
-  if(MSVC)
-    hunter_add_package(getopt)
-    find_package(getopt CONFIG REQUIRED)
-  endif(MSVC)
+  hunter_add_package(getopt)
+  find_package(getopt CONFIG REQUIRED)
   if (IS_HOST_PLATFORM)
     hunter_add_package(astc-encoder)
     find_package(astc-encoder CONFIG REQUIRED)

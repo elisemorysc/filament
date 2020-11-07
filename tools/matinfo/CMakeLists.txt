@@ -14,7 +14,7 @@ set(SRCS src/main.cpp)
 add_executable(${TARGET} ${SRCS})
 
 if(HUNTER_ENABLED)
-  target_link_libraries(${TARGET} matdbg filaflat backend_headers utils SPIRV-Tools::SPIRV-Tools spirv-cross-glsl)
+  target_link_libraries(${TARGET} matdbg filaflat backend_headers utils getopt::getopt SPIRV-Tools::SPIRV-Tools spirv-cross-glsl)
 else()
   target_link_libraries(${TARGET} matdbg filaflat backend_headers utils getopt SPIRV-Tools spirv-cross-glsl)
 endif()

@@ -13,7 +13,7 @@ set(SRCS src/main.cpp)
 # ==================================================================================================
 add_executable(${TARGET} ${SRCS})
 if(HUNTER_ENABLED)
-  target_link_libraries(${TARGET} PRIVATE utils)
+  target_link_libraries(${TARGET} PRIVATE utils getopt::getopt)
 else()
   target_link_libraries(${TARGET} PRIVATE utils getopt)
 endif()

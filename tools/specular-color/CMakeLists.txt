@@ -14,7 +14,7 @@ set(SRCS src/main.cpp)
 add_executable(${TARGET} ${SRCS})
 
 if(HUNTER_ENABLED)
-  target_link_libraries(${TARGET} utils math)
+  target_link_libraries(${TARGET} getopt::getopt utils math)
 else()
   target_link_libraries(${TARGET} getopt utils math)
 endif()

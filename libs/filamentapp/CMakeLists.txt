@@ -47,6 +47,7 @@ if(HUNTER_ENABLED)
    math
    filamat
    utils
+   getopt::getopt
    imgui::imgui
    filagui
    image
@@ -89,7 +90,7 @@ endif()
 
 if (WIN32)
     list(APPEND SRCS src/NativeWindowHelperWindows.cpp)
-    list(APPEND LIBS sdl2main)
+    list(APPEND LIBS SDL2::SDL2main)
 endif()
 
 # ==================================================================================================

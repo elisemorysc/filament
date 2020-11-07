@@ -23,7 +23,7 @@ set(SRCS
 add_executable(${TARGET} ${HDRS} ${SRCS})
 
 if(HUNTER_ENABLED)
-  target_link_libraries(${TARGET} PRIVATE math utils ibl z image imageio)
+  target_link_libraries(${TARGET} PRIVATE math utils ibl ZLIB::zlib image imageio getopt::getopt)
 else()
   target_link_libraries(${TARGET} PRIVATE math utils ibl z image imageio getopt)
 endif()
