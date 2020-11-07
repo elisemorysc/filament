@@ -17,7 +17,12 @@ add_executable(${TARGET} ${HDRS} ${SRCS})
 
 
 if(HUNTER_ENABLED)
-  target_link_libraries(${TARGET} PRIVATE math utils ZLIB::zlib image imageio getopt::getopt)
+  target_link_libraries(${TARGET} PRIVATE math utils ZLIB::zlib image imageio)
+  if (MSVC)
+    target_link_libraries(${TARGET} PRIVATE getopt::getopt)
+  else()
+    target_link_libraries(${TARGET} PRIVATE getopt)
+  endif()
 else()
   target_link_libraries(${TARGET} PRIVATE math utils z image imageio getopt)
 endif()
