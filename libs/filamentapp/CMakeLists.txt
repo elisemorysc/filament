@@ -47,13 +47,17 @@ if(HUNTER_ENABLED)
    math
    filamat
    utils
-   getopt::getopt
    imgui::imgui
    filagui
    image
    camutils
    geometry
   )
+  if(WIN32)
+    list(APPEND LIBS getopt::getopt)
+  else()
+    list(APPEND LIBS getopt)
+  endif()
 else()
   set(LIBS
     assimp
