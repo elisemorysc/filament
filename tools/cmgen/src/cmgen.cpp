@@ -46,7 +46,7 @@
 #include <iostream>
 #include <sstream>
 
-#if defined (_MSC_VER) || !defined (FILAMENT_USE_HUNTER)
+#if !defined (FILAMENT_USE_HUNTER)
 #include <getopt/getopt.h>
 #else
 #include <getopt.h>

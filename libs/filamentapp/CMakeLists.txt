@@ -53,6 +53,11 @@ if(HUNTER_ENABLED)
    camutils
    geometry
   )
+  if(WIN32)
+    list(APPEND LIBS getopt::getopt)
+  else()
+    list(APPEND LIBS getopt)
+  endif()
 else()
   set(LIBS
     assimp
@@ -89,7 +94,7 @@ endif()
 
 if (WIN32)
     list(APPEND SRCS src/NativeWindowHelperWindows.cpp)
-    list(APPEND LIBS sdl2main)
+    list(APPEND LIBS SDL2::SDL2main)
 endif()
 
 # ==================================================================================================

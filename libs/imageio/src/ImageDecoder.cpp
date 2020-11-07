@@ -27,13 +27,6 @@
 
 #include <png.h>
 
-#if defined(WIN32)
-#    include <Winsock2.h>
-#    include <utils/unwindows.h>
-#else
-#    include <arpa/inet.h>
-#endif
-
 #include <math/vec3.h>
 #include <math/vec4.h>
 
@@ -41,6 +34,13 @@
 #include <tinyexr/tinyexr.h>
 #else
 #include <tinyexr.h>
+#endif
+
+#if defined(WIN32)
+#    include <Winsock2.h>
+#    include <utils/unwindows.h>
+#else
+#    include <arpa/inet.h>
 #endif
 
 #include <vector>

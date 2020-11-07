@@ -24,19 +24,19 @@
 #include <memory>
 #include <iostream> // for cerr
 
-#if defined(WIN32)
-    #include <Winsock2.h>
-    #include <utils/unwindows.h>
-#else
-    #include <arpa/inet.h>
-#endif
-
 #include <png.h>
 
 #ifdef FILAMENT_USE_HUNTER
 #include <tinyexr/tinyexr.h>
 #else
 #include <tinyexr.h>
+#endif
+
+#if defined(WIN32)
+#include <Winsock2.h>
+#include <utils/unwindows.h>
+#else
+#include <arpa/inet.h>
 #endif
 
 #include <math/half.h>
