@@ -55,8 +55,6 @@ if(HUNTER_ENABLED)
   )
   if(WIN32)
     list(APPEND LIBS getopt::getopt)
-  else()
-    list(APPEND LIBS getopt)
   endif()
 else()
   set(LIBS
