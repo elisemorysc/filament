@@ -321,15 +321,34 @@ if (APPLE)
         test/test_BufferUpdates.cpp
         test/test_MRT.cpp)
 
-    target_link_libraries(backend_test PRIVATE
-        backend
-        filabridge
-        getopt
-        gtest
-        SPIRV
-        spirv-cross-glsl)
+    if(HUNTER_ENABLED)
+        target_link_libraries(backend_test PRIVATE
+            backend
+            filabridge
+            GTest::gtest
+            glslang::SPIRV
+            spirv-cross-glsl
+            glslang::OGLCompiler
+            glslang::OSDependent
+            SPIRV-Tools::SPIRV-Tools
+            SPIRV-Tools::SPIRV-Tools-opt
+            glslang::glslang
+            spirv-cross-core
+            spirv-cross-msl)
 
-    set(BACKEND_TEST_DEPS
+            if (NOT IOS)
+                target_link_libraries(backend_test PRIVATE image imageio)
+            endif()
+    else()
+        target_link_libraries(backend_test PRIVATE
+            backend
+            filabridge
+            getopt
+            gtest
+            SPIRV
+            spirv-cross-glsl)
+
+        set(BACKEND_TEST_DEPS
             OGLCompiler
             OSDependent
             SPIRV
@@ -342,21 +361,25 @@ if (APPLE)
             glslang
             spirv-cross-core
             spirv-cross-glsl
-            spirv-cross-msl
-            )
+            spirv-cross-msl)
 
-    if (NOT IOS)
-        target_link_libraries(backend_test PRIVATE image imageio)
-        list(APPEND BACKEND_TEST_DEPS image imageio)
+        if (NOT IOS)
+            target_link_libraries(backend_test PRIVATE image imageio)
+            list(APPEND BACKEND_TEST_DEPS image imageio)
+        endif()
+
+        set(BACKEND_TEST_COMBINED_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/libbackendtest_combined.a")
+        combine_static_libs(backend_test "${BACKEND_TEST_COMBINED_OUTPUT}" "${BACKEND_TEST_DEPS}")
+
+        set(BACKEND_TEST_LIB_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}backend_test${CMAKE_STATIC_LIBRARY_SUFFIX})
     endif()
 
-    set(BACKEND_TEST_COMBINED_OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/libbackendtest_combined.a")
-    combine_static_libs(backend_test "${BACKEND_TEST_COMBINED_OUTPUT}" "${BACKEND_TEST_DEPS}")
-
-    set(BACKEND_TEST_LIB_NAME ${CMAKE_STATIC_LIBRARY_PREFIX}backend_test${CMAKE_STATIC_LIBRARY_SUFFIX})
-
     if (INSTALL_BACKEND_TEST)
-        install(FILES "${BACKEND_TEST_COMBINED_OUTPUT}" DESTINATION lib/${DIST_DIR} RENAME ${BACKEND_TEST_LIB_NAME})
+        if(HUNTER_ENABLED)
+            install(TARGETS backend_test EXPORT ${TARGETS_EXPORT_NAME} ARCHIVE DESTINATION lib/${DIST_DIR})
+        else()
+            install(FILES "${BACKEND_TEST_COMBINED_OUTPUT}" DESTINATION lib/${DIST_DIR} RENAME ${BACKEND_TEST_LIB_NAME})
+        endif()
         install(FILES test/PlatformRunner.h DESTINATION include/backend_test)
     endif()
 endif()
