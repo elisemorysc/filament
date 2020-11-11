@@ -121,6 +121,7 @@ fragment {
 #endif
             postProcess.tonemappedOutput = postProcess.color;
         }
+        postProcess.tonemappedOutput = postProcess.color;
     }
 
 }
