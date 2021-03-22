@@ -5,6 +5,8 @@ A new header is inserted each time a *tag* is created.
 
 ## Next release (main branch)
 
+## v1.9.18
+
 ## v1.9.17
 
 - engine: New shift parameter on `Camera` to translate the viewport and emulate a tilt/shift lens.
