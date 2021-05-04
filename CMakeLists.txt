@@ -40,6 +40,8 @@ option(FILAMENT_SUPPORTS_XCB "Include XCB support in Linux builds" ON)
 
 option(FILAMENT_SUPPORTS_XLIB "Include XLIB support in Linux builds" ON)
 
+option(FILAMENT_USE_EGL_OPENGL "Use EGL for OpenGL in Linux builds" OFF)
+
 set(FILAMENT_NDK_VERSION "" CACHE STRING
     "Android NDK version or version prefix to be used when building for Android."
 )
@@ -113,6 +115,10 @@ if (LINUX)
 
     if (FILAMENT_SUPPORTS_XLIB)
         add_definitions(-DFILAMENT_SUPPORTS_XLIB)
+    endif()
+
+    if(FILAMENT_USE_EGL_OPENGL)
+        add_definitions(-DFILAMENT_USE_EGL_OPENGL)
     endif()
 endif()
 
@@ -258,6 +264,10 @@ endif()
 
 if (FILAMENT_USE_EXTERNAL_GLES3)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_EXTERNAL_GLES3")
+endif()
+
+if (FILAMENT_USE_EGL_OPENGL)
+  set(EGL TRUE)
 endif()
 
 if (FILAMENT_USE_SWIFTSHADER)
