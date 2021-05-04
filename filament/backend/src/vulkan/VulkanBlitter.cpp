@@ -21,7 +21,11 @@
 #include <utils/FixedCapacityVector.h>
 #include <utils/Panic.h>
 
+#ifdef FILAMENT_USE_HUNTER
+#include <smol-v/smolv.h>
+#else
 #include <smolv.h>
+#endif
 
 #include "generated/vkshaders/vkshaders.h"
 
