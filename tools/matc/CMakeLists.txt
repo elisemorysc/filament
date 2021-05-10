@@ -81,7 +81,11 @@ target_link_libraries(${TARGET} matlang)
 # ==================================================================================================
 # Installation
 # ==================================================================================================
-install(TARGETS ${TARGET} RUNTIME DESTINATION bin)
+if(HUNTER_ENABLED)
+  install(TARGETS ${TARGET} EXPORT ${TARGETS_EXPORT_NAME} RUNTIME DESTINATION bin)
+else()
+  install(TARGETS ${TARGET} RUNTIME DESTINATION bin)
+endif()
 
 # ==================================================================================================
 # Tests
