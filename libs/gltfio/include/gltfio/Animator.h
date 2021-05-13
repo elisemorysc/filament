@@ -39,6 +39,20 @@ struct AnimatorImpl;
 class Animator {
 public:
     /**
+     * In the stock use case an Animator can only be constructed by calling getAnimator on FilamentAsset or
+     * FilamentInstance which contains both the animation and the model.
+     * 
+     * If an Animator is constructed explicitly with a FilamentAsset, the Animator will be "empty" as in it
+     * contains all the animation data but it is not hooked up with any actual entities.
+     * 
+     * We can then call addAnimatedAsset to apply the animations to the specified model asset. The model
+     * asset can be different than the animation asset. The animator will try to find the entities to 
+     * animate based on gltf node names.
+     */
+    Animator(FilamentAsset* animationAsset);
+    ~Animator();
+
+    /**
      * Applies rotation, translation, and scale to entities that have been targeted by the given
      * animation definition. Uses filament::TransformManager.
      *
@@ -71,6 +85,12 @@ public:
     // For internal use only.
     void addInstance(FFilamentInstance* instance);
 
+    /** Add the model to be animated. */
+    void addAnimatedAsset(FilamentAsset* assetToAnimate);
+
+    /** Remove the model to be animated. */
+    void removeAnimatedAsset();
+
 private:
 
     /*! \cond PRIVATE */
@@ -79,7 +99,9 @@ private:
     /*! \endcond */
 
     Animator(FFilamentAsset* asset, FFilamentInstance* instance);
-    ~Animator();
+    bool loadAnimatorImpl(FFilamentAsset* asset, FFilamentInstance* instance,
+        bool validateMorphChannels = true);
+    void addAnimatedAsset(FFilamentAsset* asset, FFilamentInstance* instance);
     AnimatorImpl* mImpl;
 };
 
