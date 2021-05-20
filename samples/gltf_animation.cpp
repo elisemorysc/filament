@@ -30,6 +30,7 @@
 #include <filament/VertexBuffer.h>
 #include <filament/View.h>
 
+#include <gltfio/Animator.h>
 #include <gltfio/AssetLoader.h>
 #include <gltfio/FilamentAsset.h>
 #include <gltfio/ResourceLoader.h>
@@ -75,6 +76,7 @@ struct App {
     FilamentAsset* asset = nullptr;
     FilamentAsset* animAsset = nullptr;
     Animator* animator = nullptr;
+    Morpher* morpher = nullptr;
     NameComponentManager* names;
 
     MaterialProvider* materials;
@@ -461,6 +463,7 @@ int main(int argc, char** argv) {
             app.resourceLoader = new gltfio::ResourceLoader(configuration);
         }
         app.resourceLoader->loadResources(app.asset);
+        app.morpher = Animator::createMorpher<CPUMorpher>(app.asset);
 
         auto ibl = FilamentApp::get().getIBL();
         if (ibl) {
@@ -475,7 +478,7 @@ int main(int argc, char** argv) {
         }
 
         app.animator = new Animator(app.animAsset);
-        app.animator->addAnimatedAsset(app.asset);
+        app.animator->addAnimatedAsset(app.asset, app.morpher);
     };
 
     auto setup = [&](Engine* engine, View* view, Scene* scene) {
@@ -641,10 +644,11 @@ int main(int argc, char** argv) {
     auto cleanup = [&app](Engine* engine, View*, Scene*) {
         app.automationEngine->terminate();
         app.resourceLoader->asyncCancelLoad();
-        app.assetLoader->destroyAsset(app.asset);
+        Animator::destroyMorpher(app.morpher);
         if (app.animAsset) {
             app.assetLoader->destroyAsset(app.animAsset);
         }
+        app.assetLoader->destroyAsset(app.asset);
         app.materials->destroyMaterials();
 
         engine->destroy(app.scene.groundPlane);

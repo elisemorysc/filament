@@ -18,7 +18,9 @@
 
 #include "FFilamentAsset.h"
 #include "FFilamentInstance.h"
+#include "Morpher.h"
 #include "MorphHelper.h"
+#include "CPUMorpher.h"
 #include "math.h"
 #include "upcast.h"
 
@@ -79,7 +81,8 @@ struct AnimatorImpl {
     RenderableManager* renderableManager;
     TransformManager* transformManager;
     vector<float> weights;
-    MorphHelper* morpher = nullptr;
+    Morpher* morpher = nullptr;
+    bool isMorpherExternal = false;
     TransformMap zeroTransformMap;
     void addChannels(const NodeMap& nodeMap, const cgltf_animation& srcAnim, Animation& dst);
     void applyAnimation(const Channel& channel, float t, size_t prevIndex, size_t nextIndex);
@@ -226,7 +229,7 @@ bool Animator::loadAnimatorImpl(FFilamentAsset* asset, FFilamentInstance* instan
 Animator::Animator(FFilamentAsset* asset, FFilamentInstance* instance) {
     assert(asset->mResourcesLoaded && asset->mSourceAsset);
     if (!loadAnimatorImpl(asset, instance)) return;
-    addAnimatedAsset(asset, instance);
+    addAnimatedAsset(asset, instance, nullptr);
 }
 
 Animator::Animator(FilamentAsset* animationAsset) {
@@ -241,11 +244,19 @@ Animator::Animator(FilamentAsset* animationAsset) {
     loadAnimatorImpl(asset, nullptr, false);
 }
 
-void Animator::addAnimatedAsset(FFilamentAsset* asset, FFilamentInstance* instance) {
+void Animator::addAnimatedAsset(FFilamentAsset* asset, FFilamentInstance* instance, Morpher* morpher) {
     mImpl->assetToAnimate = asset;
     mImpl->instance = instance;
 
-    mImpl->morpher = new MorphHelper(asset, instance);
+    if (morpher) {
+        mImpl->morpher = morpher;
+        mImpl->isMorpherExternal = true;
+    }
+    else {
+        mImpl->morpher = createMorpher<MorphHelper>(asset, instance);
+        mImpl->isMorpherExternal = false;
+    }
+    
 
     // record the transforms of entities so we can restore them to their original state
     // when the animatedAsset is removed
@@ -275,8 +286,8 @@ void Animator::addAnimatedAsset(FFilamentAsset* asset, FFilamentInstance* instan
     }
 }
 
-void Animator::addAnimatedAsset(FilamentAsset* assetToAnimate) {
-    addAnimatedAsset(upcast(assetToAnimate), nullptr);
+void Animator::addAnimatedAsset(FilamentAsset* assetToAnimate, Morpher* morpher) {
+    addAnimatedAsset(upcast(assetToAnimate), nullptr, morpher);
 }
 
 void Animator::removeAnimatedAsset() {
@@ -298,8 +309,21 @@ void Animator::removeAnimatedAsset() {
     mImpl->boneMatrices.clear();
     mImpl->weights.clear();
 
-    if (mImpl->morpher) delete mImpl->morpher;
+    if (mImpl->morpher && !mImpl->isMorpherExternal) {
+        delete mImpl->morpher;
+    }
     mImpl->morpher = nullptr;
+}
+
+template <class T>
+Morpher* Animator::createMorpher(FilamentAsset* asset, FilamentInstance* instance) {
+    return new T(upcast(asset), upcast(instance));
+}
+template Morpher* Animator::createMorpher<MorphHelper>(FilamentAsset *asset, FilamentInstance* instance);
+template Morpher* Animator::createMorpher<CPUMorpher>(FilamentAsset *asset, FilamentInstance* instance);
+
+void Animator::destroyMorpher(Morpher* morpher) {
+    if (morpher) delete morpher;
 }
 
 void Animator::addInstance(FFilamentInstance* instance) {
@@ -313,7 +337,9 @@ void Animator::addInstance(FFilamentInstance* instance) {
 }
 
 Animator::~Animator() {
-    if (mImpl->morpher) delete mImpl->morpher;
+    if (mImpl->morpher && !mImpl->isMorpherExternal) {
+        delete mImpl->morpher;
+    }
     delete mImpl;
 }
 
