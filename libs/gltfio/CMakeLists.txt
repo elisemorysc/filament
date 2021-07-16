@@ -40,6 +40,10 @@ set(SRCS
         src/math.h
         src/upcast.h
         src/Image.cpp
+        src/Morpher.h
+        src/CPUMorpher.h
+        src/CPUMorpher.cpp
+        src/GltfHelpers.h
 )
 
 # ==================================================================================================

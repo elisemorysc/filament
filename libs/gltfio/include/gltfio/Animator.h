@@ -25,6 +25,9 @@ namespace gltfio {
 struct FFilamentAsset;
 struct FFilamentInstance;
 struct AnimatorImpl;
+class Morpher;
+class MorphHelper;
+class CPUMorpher;
 
 /**
  * \class Animator Animator.h gltfio/Animator.h
@@ -85,11 +88,20 @@ public:
     // For internal use only.
     void addInstance(FFilamentInstance* instance);
 
-    /** Add the model to be animated. */
-    void addAnimatedAsset(FilamentAsset* assetToAnimate);
+    /** Add the model to be animated. 
+     * 
+     * NOTE: by default Animator creates and owns an internal morpher of type MorphHelper.
+     * But if an external morpher is supplied here the internal one will not be created.
+    */
+    void addAnimatedAsset(FilamentAsset* assetToAnimate, Morpher* morpher);
 
     /** Remove the model to be animated. */
     void removeAnimatedAsset();
+
+    template<class T>
+    static Morpher* createMorpher(FilamentAsset* asset, FilamentInstance* instance = nullptr);
+
+    static void destroyMorpher(Morpher* morpher);
 
 private:
 
@@ -101,7 +113,8 @@ private:
     Animator(FFilamentAsset* asset, FFilamentInstance* instance);
     bool loadAnimatorImpl(FFilamentAsset* asset, FFilamentInstance* instance,
         bool validateMorphChannels = true);
-    void addAnimatedAsset(FFilamentAsset* asset, FFilamentInstance* instance);
+    void addAnimatedAsset(FFilamentAsset* asset, FFilamentInstance* instance,
+        Morpher* morpher);
     AnimatorImpl* mImpl;
 };
 
